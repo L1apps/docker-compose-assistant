@@ -21,15 +21,17 @@ This guide will walk you through deploying the Docker Compose Assistant (DCA) us
 
 4.  **Paste the Compose Configuration:**
 
-    Copy the following content and paste it into Portainer's web editor. This configuration pulls a ready-to-use image from a public registry, which is the fastest and simplest way to deploy the application.
+    **Important:** Before deploying, you must build and push the Docker image to a container registry (like GitHub Container Registry or Docker Hub). Refer to the main [README.md](./README.md) for instructions on building and pushing the image.
+
+    Once your image is published, copy the following configuration and paste it into Portainer's web editor. **Remember to replace `tjfx101/docker-compose-assistant`** with the path to your own published image if it differs.
 
     ```yaml
     version: '3.8'
 
     services:
       dca-app:
-        # Use the pre-built image from a container registry
-        image: ghcr.io/google/aistudio-docker-compose-assistant:latest
+        # Replace the URL below with your own published image URL
+        image: ghcr.io/tjfx101/docker-compose-assistant:latest
         container_name: docker-compose-assistant
         ports:
           - "8500:80" # You can change the host port (8500) if it's already in use
