@@ -9,8 +9,9 @@ services:
     
     # If you prefer to use a pre-built image from a container registry,
     # comment out the 'build' key above and uncomment the 'image' key below.
-    # This is the recommended method for easy deployment.
-    # image: ghcr.io/google/aistudio-docker-compose-assistant:latest
+    # NOTE: You must build and push your own image first, then replace the
+    # placeholder below with your image URL.
+    # image: ghcr.io/tjfx101/docker-compose-assistant:latest
 
     container_name: docker-compose-assistant
     ports:
