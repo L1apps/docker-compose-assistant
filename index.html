@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Docker Compose Assistant</title>
+    <style>
+      /* Theme variables */
+      :root[data-theme='light'] {
+        --color-background: 248 250 252; /* slate-50 */
+        --color-background-offset: 255 255 255; /* white */
+        --color-foreground: 30 41 59; /* slate-800 */
+        --color-foreground-muted: 100 116 139; /* slate-500 */
+        --color-border: 226 232 240; /* slate-200 */
+        --color-accent: 37 99 235; /* blue-600 */
+        --color-accent-hover: 29 78 216; /* blue-700 */
+        --color-accent-foreground: 255 255 255; /* white */
+        --color-destructive: 220 38 38; /* red-600 */
+        --color-destructive-foreground: 254 226 226; /* red-100 */
+        --color-editor-background: 255 255 255; /* white */
+      }
+      :root[data-theme='dark'] {
+        --color-background: 15 23 42; /* slate-900 */
+        --color-background-offset: 30 41 59; /* slate-800 */
+        --color-foreground: 241 245 249; /* slate-100 */
+        --color-foreground-muted: 148 163 184; /* slate-400 */
+        --color-border: 51 65 85; /* slate-700 */
+        --color-accent: 59 130 246; /* blue-500 */
+        --color-accent-hover: 37 99 235; /* blue-600 */
+        --color-accent-foreground: 255 255 255; /* white */
+        --color-destructive: 239 68 68; /* red-500 */
+        --color-destructive-foreground: 127 29 29; /* red-900 */
+        --color-editor-background: 30 30 30; /* #1e1e1e */
+      }
+       :root[data-theme='dracula'] {
+        --color-background: 40 42 54; /* #282a36 */
+        --color-background-offset: 68 71 90; /* #44475a */
+        --color-foreground: 248 248 242; /* #f8f8f2 */
+        --color-foreground-muted: 157 165 204;
+        --color-border: 98 114 164; /* #6272a4 */
+        --color-accent: 189 147 249; /* #bd93f9 */
+        --color-accent-hover: 255 121 198; /* #ff79c6 */
+        --color-accent-foreground: 248 248 242;
+        --color-destructive: 255 85 85; /* #ff5555 */
+        --color-destructive-foreground: 40 42 54;
+        --color-editor-background: 40 42 54;
+      }
+    </style>
+    <script>
+      // Apply theme from local storage or system preference before React loads
+      (() => {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+          document.documentElement.dataset.theme = theme;
+        } else {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+        }
+      })();
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.2",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-background text-foreground transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

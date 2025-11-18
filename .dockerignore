@@ -1,0 +1,40 @@
+# Git repository and Docker-related files
+.git
+.gitignore
+Dockerfile
+Dockerfile.txt
+.dockerignore
+.dockerignore.txt
+docker-compose.yml
+
+# Dependencies - these are installed inside the container via `npm ci`
+node_modules
+
+# Build artifacts - these are created inside the container during the build stage
+dist
+build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables - these should not be included in the image
+.env
+.env.local
+.env.*.local
+
+# Documentation and license files - not needed for the application to run
+README.md
+PORTAINER_DEPLOYMENT.md
+LICENSE.txt
+
+# IDE and OS-specific files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# TypeScript cache
+*.tsbuildinfo

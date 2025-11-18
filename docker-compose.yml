@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  dca-app:
+    # To build the image from the source code in this repository,
+    # use the 'build' key. This is useful for development or
+    # if you want to create your own custom image.
+    build: .
+    
+    # If you prefer to use a pre-built image from a container registry,
+    # comment out the 'build' key above and uncomment the 'image' key below.
+    # This is the recommended method for easy deployment.
+    # image: ghcr.io/google/aistudio-docker-compose-assistant:latest
+
+    container_name: docker-compose-assistant
+    ports:
+      # Exposes the service on port 8500 of the host machine.
+      # Format: <HOST_PORT>:<CONTAINER_PORT>
+      - "8500:80"
+    restart: unless-stopped
