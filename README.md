@@ -22,21 +22,33 @@ You can run DCA as a standalone container. Below are the recommended methods for
 -   Docker and Docker Compose installed on your machine.
 -   An API Key for a cloud AI provider (like Google Gemini) OR a running local AI server (like [Ollama](https://ollama.com/)).
 
-### Method 1: Running with Docker Compose (Recommended)
+### Method 1: Running with a Pre-built Image (Recommended for Deployment)
 
-This method uses a pre-built, optimized image from a public container registry. It's the simplest way to get started.
+This method uses a pre-built image that you have pushed to a container registry (like GitHub Container Registry or Docker Hub). It is the recommended way to deploy the application in a production environment.
+
+**Prerequisite:** You must first build and publish the Docker image. You can find instructions for this in **Method 2**, or use these commands as a guide:
+```bash
+# 1. Log in to your container registry (e.g., GitHub Container Registry)
+#    docker login ghcr.io -u tjfx101
+
+# 2. Build the image, replacing with your details
+docker build -t ghcr.io/tjfx101/docker-compose-assistant:latest .
+
+# 3. Push the image
+docker push ghcr.io/tjfx101/docker-compose-assistant:latest
+```
+
+Once your image is published, you can deploy it.
 
 1.  **Create `docker-compose.yml`:**
-    Create a file named `docker-compose.yml` and paste the following content into it. Make sure to uncomment the `image` line and comment out the `build` line.
+    Create a file named `docker-compose.yml` on your server and paste the following content. **Make sure to update the `image` URL** with the one you just pushed.
     ```yaml
     version: '3.8'
 
     services:
       dca-app:
-        # To build from source, comment the line below
-        image: ghcr.io/google/aistudio-docker-compose-assistant:latest
-        # To use a pre-built image, comment the line below
-        # build: .
+        # Replace the URL below with your own published image URL
+        image: ghcr.io/tjfx101/docker-compose-assistant:latest
         container_name: docker-compose-assistant
         ports:
           - "8500:80" # You can change the host port (8500) if it's already in use
@@ -51,21 +63,20 @@ This method uses a pre-built, optimized image from a public container registry. 
 
 ### Method 2: Building from Source with Docker Compose
 
-This method builds the Docker image from the source code in this repository. Use this if you want to make custom modifications.
+This method builds the Docker image from the source code in this repository. Use this for local development or if you want to make custom modifications.
 
 1.  **Clone the Repository:**
     ```bash
-    # Replace the URL with your repository's URL
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/tjfx101/docker-compose-assistant.git
+    cd docker-compose-assistant
     ```
 
 2.  **Run the Container:**
-    The `docker-compose.yml` file is already configured to build from source. Simply run:
+    The `docker-compose.yml` file in this repository is already configured to build from source. Simply run:
     ```bash
     docker-compose up -d --build
     ```
-    *Note: The default port `8500` is used. To change it, edit the `ports` section in `docker-compose.yml`.*
+    *Note: The default port `8500` is used. To change it, edit the `ports` section in the `docker-compose.yml` included in this repository.*
 
 ### Deploying with Portainer
 
@@ -114,6 +125,6 @@ You can select these from the dropdown in the settings or type in any other cust
 
 Encounter a bug, have a suggestion, or want to contribute? We'd love to hear from you! The best way to get in touch is by opening an issue on our GitHub repository.
 
--   **[Open an Issue](https://github.com/your-username/your-repo-name/issues)** <!-- TODO: Replace with your repo URL -->
+-   **[Open an Issue](https://github.com/tjfx101/docker-compose-assistant/issues)**
 
 This helps us track all feedback in one place and ensures a transparent development process.
