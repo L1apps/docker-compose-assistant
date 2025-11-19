@@ -1,5 +1,5 @@
 {
   "name": "Docker Compose Assistant",
-  "description": "A smart, web-based editor and analyzer for Docker Compose files. Get AI-powered auto-correction, formatting, contextual help, and version downgrades.",
+  "description": "A smart, web-based editor and analyzer for Docker Compose files. Get AI-powered auto-correction, formatting, and contextual help.",
   "requestFramePermissions": []
 }

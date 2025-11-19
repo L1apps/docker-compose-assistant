@@ -16,56 +16,40 @@ Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor design
 
 ## Deployment
 
-You can run DCA as a standalone container. The recommended method is to use a pre-built image from Docker Hub, which is the easiest and most reliable way to get started.
+The recommended method is to use the pre-built image from Docker Hub via Docker Compose or the Docker CLI.
 
 ### Prerequisites
 
 -   Docker and Docker Compose installed on your machine.
 -   An API Key for a cloud AI provider (like Google Gemini) OR a running local AI server (like [Ollama](https://ollama.com/)).
 
-### One-Time Setup for the Repository Owner: Publishing to Docker Hub
-
-To avoid authentication issues sometimes seen with other registries, the official image for this project is hosted on Docker Hub. As the repository owner, you must build and publish the image to a **public Docker Hub repository**.
-
-This is a one-time action that makes deployment seamless for all users.
-
-1.  **Log in to Docker Hub:**
-    ```bash
-    docker login
-    ```
-2.  **Build and Tag the Image:** (Replace `tjfx101` with your actual Docker Hub username if forking)
-    ```bash
-    docker build -t tjfx101/docker-compose-assistant:latest .
-    ```
-3.  **Push the Image to Docker Hub:**
-    ```bash
-    docker push tjfx101/docker-compose-assistant:latest
-    ```
-
-### Using the Pre-built Image (Recommended)
-
-This is the simplest way to run the application. It pulls the ready-to-use public image from Docker Hub.
-
-**Deployment Steps**
+### Option 1: Using Docker Compose
 
 1.  **Create `docker-compose.yml`:**
     Create a file named `docker-compose.yml` and paste the content below.
-    services:
-      dca-app:
-        image: tjfx101/docker-compose-assistant:latest
-        container_name: docker-compose-assistant
-        ports:
-          - "8500:80" # Change the host port (8500) if needed
-        restart: unless-stopped
 
+        services:
+          dca-app:
+            image: tjfx101/docker-compose-assistant:latest
+            container_name: docker-compose-assistant
+            ports:
+              - "8500:80" # Change the host port (8500) if needed
+            restart: unless-stopped
 
 2.  **Run the Container:**
     In the same directory, run:
-    docker-compose up -d
 
-### Deploying with Portainer
+        docker-compose up -d
 
-For users who manage their Docker environment with Portainer, we provide a dedicated guide for easy deployment using the pre-built image from Docker Hub.
+### Option 2: Using Docker CLI
+
+You can also run the container directly with a single command:
+
+    docker run -d -p 8500:80 --name docker-compose-assistant tjfx101/docker-compose-assistant:latest
+
+### Option 3: Deploying with Portainer
+
+For users who manage their Docker environment with Portainer, we provide a dedicated guide.
 
 -   **[View the Portainer Deployment Guide](./PORTAINER_DEPLOYMENT.md)**
 

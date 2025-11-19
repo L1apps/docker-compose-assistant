@@ -2,16 +2,15 @@ version: '3.8'
 
 services:
   dca-app:
-    # To build the image from the source code in this repository,
-    # use the 'build' key. This is useful for development or
-    # if you want to create your own custom image.
-    build: .
+    # This is the recommended method. It uses a pre-built image from Docker Hub,
+    # which provides the most reliable public access.
+    # The repository owner must build and push the image to a public Docker Hub
+    # repository for this to work.
+    image: tjfx101/docker-compose-assistant:latest
     
-    # If you prefer to use a pre-built image from a container registry,
-    # comment out the 'build' key above and uncomment the 'image' key below.
-    # NOTE: You must build and push your own image first, then replace the
-    # placeholder below with your image URL.
-    # image: ghcr.io/tjfx101/docker-compose-assistant:latest
+    # To build the image from source instead, comment out the 'image' key above
+    # and uncomment the 'build' key below.
+    # build: .
 
     container_name: docker-compose-assistant
     ports:

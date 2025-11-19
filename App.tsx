@@ -1,18 +1,18 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { EditorPanel } from './components/EditorPanel';
 import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
-import { getAIProvider } from './services/aiServiceFactory';
+import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { LogoIcon, ExternalLinkIcon, SettingsIcon, InfoIcon, FeedbackIcon } from './components/icons';
+import { LogoIcon, ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon } from './components/icons';
 import { HelpModal } from './components/HelpModal';
-import { SettingsModal } from './components/SettingsModal';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
+import { WelcomeScreen } from './components/WelcomeScreen';
+import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.7.0";
-const GITHUB_REPO_URL = "https://github.com/<your-username>/<your-repo-name>"; // TODO: Replace with your repo URL
-const defaultAiConfig: AIProviderConfig = { provider: 'gemini', model: 'gemini-2.5-pro' };
+const APP_VERSION = "1.8.0";
+const DOCKER_HUB_URL = "https://hub.docker.com/r/tjfx101/docker-compose-assistant";
 
 const App: React.FC = () => {
   const [code, setCode] = useState<string>(`# Paste your docker-compose.yml here or load a file.
@@ -34,6 +34,7 @@ services:
   const [explanation, setExplanation] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isExplaining, setIsExplaining] = useState<boolean>(false);
+  const [isFormatting, setIsFormatting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,66 +44,56 @@ services:
   const [isHelpLoading, setIsHelpLoading] = useState<boolean>(false);
   const [helpError, setHelpError] = useState<string>('');
 
-  const [detectedVersion, setDetectedVersion] = useState<string>('');
-  const [isDowngrading, setIsDowngrading] = useState<boolean>(false);
-  
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
-  const [aiConfig, setAiConfig] = useState<AIProviderConfig>(() => {
-    const savedConfig = localStorage.getItem('aiConfig');
-    return savedConfig ? JSON.parse(savedConfig) : defaultAiConfig;
-  });
+  
   const [theme, setTheme] = useState<Theme>(() => {
-    return (document.documentElement.dataset.theme as Theme) || 'dark';
+    return (localStorage.getItem('theme') as Theme) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
+  const [aiProviderConfig, setAIProviderConfig] = useState<AIProviderConfig | null>(() => {
+    try {
+      const storedConfig = localStorage.getItem('aiProviderConfig');
+      return storedConfig ? JSON.parse(storedConfig) : null;
+    } catch {
+      localStorage.removeItem('aiProviderConfig');
+      return null;
+    }
+  });
+
+  const [showWelcome, setShowWelcome] = useState<boolean>(!aiProviderConfig);
+  const [aiProvider, setAIProvider] = useState<AIProvider | null>(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Effect to sync theme changes to localStorage and DOM
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const aiProvider: AIProvider | null = useMemo(() => {
-    try {
-      return getAIProvider(aiConfig);
-    } catch (e) {
-      console.error(e);
-      setError(e instanceof Error ? e.message : 'Failed to initialize AI provider.');
-      return null;
-    }
-  }, [aiConfig]);
-  
-  const isAiConfigured = !!aiProvider;
-
   useEffect(() => {
-    const match = code.match(/version:\s*['"]?(\d+\.\d+)['"]?/);
-    setDetectedVersion(match ? match[1] : 'N/A');
-  }, [code]);
+    setAIProvider(createAIProvider(aiProviderConfig));
+  }, [aiProviderConfig]);
 
   const handleConfigSave = (config: AIProviderConfig) => {
-    setAiConfig(config);
-    localStorage.setItem('aiConfig', JSON.stringify(config));
-    setError(''); // Clear any previous errors on new config
+    setAIProviderConfig(config);
+    localStorage.setItem('aiProviderConfig', JSON.stringify(config));
+    setShowWelcome(false);
+    setIsSettingsModalOpen(false);
   };
-  
-  const handleResetApp = () => {
-    if (window.confirm("Are you sure you want to reset the web application? All settings will be cleared.")) {
-      localStorage.clear();
-      window.location.reload();
+    
+  const handleSkipWelcome = () => {
+    setShowWelcome(false);
+  };
+    
+  const handleResetConfig = () => {
+    if (confirm("Are you sure you want to reset all application settings? This will remove your AI provider configuration and reload the application.")) {
+        localStorage.clear();
+        window.location.reload();
     }
-  }
-
-  const ensureAiIsConfigured = (): boolean => {
-    if (!isAiConfigured) {
-      setError("Please configure your AI Provider. You can do this from the Settings menu.");
-      setIsSettingsModalOpen(true);
-      return false;
-    }
-    setError('');
-    return true;
-  }
+  };
 
   const handleAnalyze = useCallback(async () => {
-    if (!ensureAiIsConfigured() || !aiProvider) return;
+    if (!aiProvider) return;
     setIsLoading(true);
     setError('');
     setSuggestions([]);
@@ -121,7 +112,7 @@ services:
   }, [code, aiProvider]);
 
   const handleExplain = useCallback(async () => {
-    if (!ensureAiIsConfigured() || !aiProvider) return;
+    if (!aiProvider) return;
     setIsExplaining(true);
     setError('');
     setSuggestions([]);
@@ -137,9 +128,29 @@ services:
       setIsExplaining(false);
     }
   }, [code, aiProvider]);
+  
+  const handleFormatCode = useCallback(async () => {
+    if (!aiProvider) return;
+    setIsFormatting(true);
+    setError('');
+    setSuggestions([]);
+    setCorrectedCode('');
+    setExplanation('');
+    try {
+      const result = await aiProvider.formatCode(code);
+      // Instead of setting code directly, we set correctedCode to trigger the Diff Viewer
+      setCorrectedCode(result.formattedCode);
+      setSuggestions([{ suggestion: "The code has been formatted to standard YAML spacing and syntax standards." }]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'An unknown error occurred while formatting the code.');
+      console.error(e);
+    } finally {
+      setIsFormatting(false);
+    }
+  }, [code, aiProvider]);
 
   const handleGetHelp = useCallback(async (keyword: string) => {
-    if (!ensureAiIsConfigured() || !aiProvider) return;
+    if (!aiProvider) return;
     setHelpKeyword(keyword);
     setIsHelpModalOpen(true);
     setIsHelpLoading(true);
@@ -156,26 +167,6 @@ services:
     }
   }, [aiProvider]);
   
-  const handleDowngrade = useCallback(async (targetVersion: string) => {
-    if (!ensureAiIsConfigured() || !aiProvider) return;
-    setIsDowngrading(true);
-    setError('');
-    setSuggestions([]);
-    setCorrectedCode('');
-    setExplanation('');
-    try {
-      const result = await aiProvider.downgradeComposeVersion(code, targetVersion);
-      setSuggestions(result.changes);
-      setCorrectedCode(result.downgradedCode);
-      setCode(result.downgradedCode);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : `Failed to downgrade to version ${targetVersion}.`);
-      console.error(e);
-    } finally {
-      setIsDowngrading(false);
-    }
-  }, [code, aiProvider]);
-
   const handleFileLoad = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -207,6 +198,115 @@ services:
     document.body.removeChild(link);
   };
 
+  const handleClear = useCallback(() => {
+    if (code.trim() !== '' && !window.confirm('Are you sure you want to clear the editor? This cannot be undone.')) {
+      return;
+    }
+    setCode('');
+    setSuggestions([]);
+    setCorrectedCode('');
+    setExplanation('');
+    setError('');
+  }, [code]);
+
   const handleUseCorrectedCode = () => {
-    if (correctedCode) setCode(correctedCode);
+    if (correctedCode) {
+      setCode(correctedCode);
+      setCorrectedCode('');
+      setSuggestions([]);
+    }
   };
+
+  if (showWelcome) {
+    return <WelcomeScreen onConfigured={handleConfigSave} onSkip={handleSkipWelcome} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-200">
+      <header className="bg-background-offset/80 backdrop-blur-sm border-b border-border p-4 sticky top-0 z-10">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <LogoIcon className="w-8 h-8 text-accent" />
+            <h1 className="text-xl font-bold text-foreground">Docker Compose Assistant</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <a href="https://docs.docker.com/reference/compose-file/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground-muted hover:text-accent transition-colors hidden sm:flex">
+              Compose Docs
+              <ExternalLinkIcon className="w-4 h-4" />
+            </a>
+            <div className="w-px h-6 bg-border mx-2 hidden sm:block"></div>
+            <ThemeSwitcher theme={theme} setTheme={setTheme} />
+             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors" title="View on Docker Hub">
+                <DockerIcon className="w-5 h-5" />
+            </a>
+            <button onClick={() => setIsSettingsModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="AI Provider Settings">
+              <SettingsIcon className="w-5 h-5" />
+            </button>
+             <div className="w-px h-6 bg-border mx-2"></div>
+             <button onClick={() => setIsAboutModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="About this Web Application">
+              <InfoIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-grow container mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+        <EditorPanel
+          code={code}
+          setCode={setCode}
+          onAnalyze={handleAnalyze}
+          onFileLoad={triggerFileLoad}
+          onFileSave={handleFileSave}
+          onClear={handleClear}
+          onGetHelp={handleGetHelp}
+          isLoading={isLoading}
+          onExplain={handleExplain}
+          isExplaining={isExplaining}
+          onFormatCode={handleFormatCode}
+          isFormatting={isFormatting}
+          isAIConfigured={!!aiProvider}
+        />
+        <SuggestionPanel
+          code={code}
+          suggestions={suggestions}
+          correctedCode={correctedCode}
+          isLoading={isLoading}
+          isExplaining={isExplaining}
+          isFormatting={isFormatting}
+          explanation={explanation}
+          error={error}
+          onUseCorrectedCode={handleUseCorrectedCode}
+          isAIConfigured={!!aiProvider}
+        />
+      </main>
+      
+      <input type="file" ref={fileInputRef} onChange={handleFileLoad} className="hidden" accept=".yml,.yaml" />
+
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} keyword={helpKeyword} content={helpContent} isLoading={isHelpLoading} error={helpError} />
+      
+      <AboutModal isOpen={isAboutModalOpen} onClose={() => setIsAboutModalOpen(false)} version={APP_VERSION} dockerHubUrl={DOCKER_HUB_URL} />
+
+      <SettingsModal 
+        isOpen={isSettingsModalOpen} 
+        onClose={() => setIsSettingsModalOpen(false)} 
+        onSave={handleConfigSave}
+        initialConfig={aiProviderConfig}
+        onReset={handleResetConfig}
+      />
+
+      <footer className="border-t border-border mt-auto">
+        <div className="container mx-auto px-4 lg:px-6 py-3 flex justify-between items-center text-xs text-foreground-muted">
+          <span>Version {APP_VERSION} &copy; {new Date().getFullYear()} DCA Project. Apache 2.0 Licensed.</span>
+          <div className="flex items-center gap-4">
+            <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+              <DockerIcon className="w-4 h-4" />
+              <span>Docker Hub</span>
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

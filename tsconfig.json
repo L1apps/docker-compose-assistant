@@ -22,9 +22,7 @@
   },
   "include": ["."],
   "exclude": [
-    "node_modules",
-    "services/geminiService.ts",
-    "components/WelcomeScreen.tsx"
+    "node_modules"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

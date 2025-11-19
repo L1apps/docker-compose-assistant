@@ -1,11 +1,11 @@
 # Stage 1: Build the React application
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 
 # Copy package files and install dependencies
-# Using 'ci' for reproducible builds if a lockfile is present
+# Using 'install' is more robust for this context than 'ci'
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy the rest of the application source code
 COPY . .
