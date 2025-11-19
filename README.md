@@ -1,86 +1,71 @@
 # Docker Compose Assistant (DCA)
 
-Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor designed to help you write, validate, and improve your `docker-compose.yml` files. Powered by pluggable AI providers like Google Gemini or your own local models, it provides intelligent suggestions, auto-corrections, contextual help, and version compatibility downgrades.
+Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor designed to help you write, validate, and improve your `docker-compose.yml` files. Powered by pluggable AI providers like Google Gemini or your own local models, it provides intelligent suggestions, auto-corrections, and formatting.
 
 ## Features
 
 - **Pluggable AI Providers**: Configure the editor to use your preferred AI service, with support for Google Gemini and any OpenAI-compatible API (e.g., Ollama for local models).
 - **Privacy-First Local AI**: Run analysis using your own local models, ensuring your code never leaves your machine.
 - **AI-Powered Analysis**: Get instant feedback on your Docker Compose files, including corrections for syntax, indentation, and deprecated keys.
-- **Best Practice Suggestions**: Receive helpful hints on security, performance, and maintainability.
+- **Smart Formatting**: Auto-format your code with proper YAML spacing and structure, viewing a precise diff before applying changes.
+- **Syntax Snippets**: Quickly insert common Docker Compose blocks (Services, Networks, Volumes, etc.) directly from a dropdown menu.
+- **Structure Navigation**: Automatically detects your services, volumes, and networks for quick navigation within large files.
 - **Contextual Help**: Select any keyword in your file to get a clear explanation and code example.
-- **Version Downgrade**: Automatically rewrite your compose file to be compatible with older versions of Docker Compose.
 - **File Management**: Easily load your existing `docker-compose.yml` files and save your corrected code.
 - **Multiple Themes**: Choose from light, dark, and dracula themes to suit your preference.
 
 ## Deployment
 
-You can run DCA as a standalone container. Below are the recommended methods for deployment.
+You can run DCA as a standalone container. The recommended method is to use a pre-built image from Docker Hub, which is the easiest and most reliable way to get started.
 
 ### Prerequisites
 
 -   Docker and Docker Compose installed on your machine.
 -   An API Key for a cloud AI provider (like Google Gemini) OR a running local AI server (like [Ollama](https://ollama.com/)).
 
-### Method 1: Running with a Pre-built Image (Recommended for Deployment)
+### One-Time Setup for the Repository Owner: Publishing to Docker Hub
 
-This method uses a pre-built image that you have pushed to a container registry (like GitHub Container Registry or Docker Hub). It is the recommended way to deploy the application in a production environment.
+To avoid authentication issues sometimes seen with other registries, the official image for this project is hosted on Docker Hub. As the repository owner, you must build and publish the image to a **public Docker Hub repository**.
 
-**Prerequisite:** You must first build and publish the Docker image. You can find instructions for this in **Method 2**, or use these commands as a guide:
-```bash
-# 1. Log in to your container registry (e.g., GitHub Container Registry)
-#    docker login ghcr.io -u tjfx101
+This is a one-time action that makes deployment seamless for all users.
 
-# 2. Build the image, replacing with your details
-docker build -t ghcr.io/tjfx101/docker-compose-assistant:latest .
+1.  **Log in to Docker Hub:**
+    ```bash
+    docker login
+    ```
+2.  **Build and Tag the Image:** (Replace `tjfx101` with your actual Docker Hub username if forking)
+    ```bash
+    docker build -t tjfx101/docker-compose-assistant:latest .
+    ```
+3.  **Push the Image to Docker Hub:**
+    ```bash
+    docker push tjfx101/docker-compose-assistant:latest
+    ```
 
-# 3. Push the image
-docker push ghcr.io/tjfx101/docker-compose-assistant:latest
-```
+### Using the Pre-built Image (Recommended)
 
-Once your image is published, you can deploy it.
+This is the simplest way to run the application. It pulls the ready-to-use public image from Docker Hub.
+
+**Deployment Steps**
 
 1.  **Create `docker-compose.yml`:**
-    Create a file named `docker-compose.yml` on your server and paste the following content. **Make sure to update the `image` URL** with the one you just pushed.
-    ```yaml
-    version: '3.8'
-
+    Create a file named `docker-compose.yml` and paste the content below.
     services:
       dca-app:
-        # Replace the URL below with your own published image URL
-        image: ghcr.io/tjfx101/docker-compose-assistant:latest
+        image: tjfx101/docker-compose-assistant:latest
         container_name: docker-compose-assistant
         ports:
-          - "8500:80" # You can change the host port (8500) if it's already in use
+          - "8500:80" # Change the host port (8500) if needed
         restart: unless-stopped
-    ```
+
 
 2.  **Run the Container:**
-    Open your terminal in the same directory as your `docker-compose.yml` file and run:
-    ```bash
+    In the same directory, run:
     docker-compose up -d
-    ```
-
-### Method 2: Building from Source with Docker Compose
-
-This method builds the Docker image from the source code in this repository. Use this for local development or if you want to make custom modifications.
-
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/tjfx101/docker-compose-assistant.git
-    cd docker-compose-assistant
-    ```
-
-2.  **Run the Container:**
-    The `docker-compose.yml` file in this repository is already configured to build from source. Simply run:
-    ```bash
-    docker-compose up -d --build
-    ```
-    *Note: The default port `8500` is used. To change it, edit the `ports` section in the `docker-compose.yml` included in this repository.*
 
 ### Deploying with Portainer
 
-For users who manage their Docker environment with Portainer, we provide a dedicated guide for easy deployment.
+For users who manage their Docker environment with Portainer, we provide a dedicated guide for easy deployment using the pre-built image from Docker Hub.
 
 -   **[View the Portainer Deployment Guide](./PORTAINER_DEPLOYMENT.md)**
 
@@ -120,11 +105,3 @@ While you can use any compatible model, here are some recommendations that are k
     -   `phi3`: A powerful small language model from Microsoft.
 
 You can select these from the dropdown in the settings or type in any other custom model name you have available on your local server.
-
-## Feedback & Contributions
-
-Encounter a bug, have a suggestion, or want to contribute? We'd love to hear from you! The best way to get in touch is by opening an issue on our GitHub repository.
-
--   **[Open an Issue](https://github.com/tjfx101/docker-compose-assistant/issues)**
-
-This helps us track all feedback in one place and ensures a transparent development process.
