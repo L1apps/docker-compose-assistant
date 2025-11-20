@@ -54,7 +54,7 @@ When you launch the app for the first time, a wizard will guide you. You can als
 ## 🛠 Support
 
 Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
-For support, email: **services@l1apps.com**
+
 
 ## 📄 License
 
