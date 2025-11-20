@@ -28,7 +28,7 @@ The recommended method is to use the pre-built image from Docker Hub via Docker 
 1.  **Create `docker-compose.yml`:**
     Create a file named `docker-compose.yml` and paste the content below.
 
-        services:
+        :
           dca-app:
             image: l1apps/docker-compose-assistant:latest
             container_name: docker-compose-assistant
@@ -63,7 +63,6 @@ Once the container is running, open your web browser and navigate to:
 ## Support & Credits
 
 Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
-For support or inquiries, please email: [services@l1apps.com](mailto:services@l1apps.com).
 
 ## Configuring the AI Provider
 
