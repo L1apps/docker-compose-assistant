@@ -4,10 +4,10 @@ interface AboutModalProps {
   isOpen: boolean;
   onClose: () => void;
   version: string;
-  repoUrl: string;
+  dockerHubUrl: string;
 }
 
-export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version, repoUrl }) => {
+export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version, dockerHubUrl }) => {
   if (!isOpen) {
     return null;
   }
@@ -33,70 +33,50 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
         </header>
         <div className="p-6 overflow-y-auto text-foreground-muted prose prose-sm dark:prose-invert max-w-none">
           <p className="lead text-foreground">Version {version}</p>
-          <p>This is a smart, web-based editor and analyzer for Docker Compose files. Get AI-powered auto-correction, formatting, contextual help, and version downgrades, all while keeping your data private.</p>
+          <p>This is a smart, web-based editor and analyzer for Docker Compose files. Get AI-powered auto-correction, formatting, and contextual help, all while keeping your data private.</p>
 
-           <h3>Feedback & Contributions</h3>
-          <p>
-            This web application is designed to be a helpful tool for the community. If you encounter any bugs, have suggestions for new features, or want to contribute, please open an issue on our GitHub repository.
+           <p>Developed by <a href="https://l1apps.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Level 1 Apps (L1Apps)</a>.</p>
+           <p>For support, email us at <a href="mailto:services@l1apps.com" className="text-accent hover:underline">services@l1apps.com</a>.</p>
+
+           <h3>Project Link</h3>
+           <p>
+            You can find the official container image for this web application on Docker Hub.
           </p>
-          <p>
-            <a href={`${repoUrl}/issues`} target="_blank" rel="noopener noreferrer">Report an Issue or Suggest a Feature</a>
-          </p>
+          <ul className="list-disc pl-5 space-y-1">
+              <li><a href={dockerHubUrl} target="_blank" rel="noopener noreferrer">View Image on Docker Hub</a></li>
+          </ul>
           
           <h3>Version History</h3>
 
-           <h4>v1.7.0 (Latest)</h4>
+          <h4>v1.8.0 (Latest)</h4>
           <ul>
-            <li>Added a "Report an Issue" link in the header to allow users to provide feedback via GitHub Issues.</li>
+            <li><strong>Enhanced Formatting:</strong> Formatting now shows a Diff View (Before vs. After) so you can review changes before applying them.</li>
+            <li><strong>UI Cleanup:</strong> Replaced bulky buttons with a streamlined icon toolbar.</li>
+            <li><strong>Better Navigation:</strong> Added a "Jump to Section" feature to quickly scroll to services, networks, or volumes.</li>
+            <li><strong>Deprecated Feature Removal:</strong> Removed the Docker Compose Version Downgrade feature as it is no longer relevant for modern Docker environments.</li>
+          </ul>
+
+           <h4>v1.7.0</h4>
+          <ul>
             <li>Improved application robustness by adding a global Error Boundary to catch unexpected errors and prevent crashes.</li>
             <li>Enhanced the visual display for API errors in the feedback panel.</li>
-            <li>Updated terminology to "Web Application" for better clarity and professionalism.</li>
           </ul>
           
           <h4>v1.6.0</h4>
           <ul>
             <li>Rebranded application to "Docker Compose Assistant" (DCA).</li>
             <li>Designed a new cursive-style "DCA" logo.</li>
-            <li>Updated application name and descriptions across all documentation and UI components.</li>
           </ul>
 
           <h4>v1.5.0</h4>
           <ul>
             <li>Implemented a full theming system with multiple themes (Light, Dark, Dracula).</li>
-            <li>Replaced the theme toggle with a new theme selector dropdown in the header.</li>
-            <li>Refactored the entire application's styling to use a scalable CSS variable-based system.</li>
-          </ul>
-
-          <h4>v1.4.0</h4>
-          <ul>
-            <li>Added this "About" panel with version history and attribution.</li>
-            <li>Updated footer with new copyright notice.</li>
-          </ul>
-
-          <h4>v1.3.0</h4>
-          <ul>
-            <li>Added a dropdown of recommended models for both Gemini and Local AI providers.</li>
-            <li>Added an option to skip the setup wizard and configure the AI provider later.</li>
-            <li>Updated README documentation with new features and model recommendations.</li>
           </ul>
 
           <h4>v1.2.0</h4>
           <ul>
-            <li>Introduced the first-time setup wizard for a better onboarding experience.</li>
-            <li>Added support for local, OpenAI-compatible AI models (e.g., using Ollama) for enhanced privacy.</li>
-            <li>Overhauled settings to be fully managed within the application UI.</li>
-            <li>Removed the need to configure API keys in the `docker-compose.yml` file.</li>
-          </ul>
-
-          <h4>v1.1.0</h4>
-          <ul>
-            <li>Initial release with core AI-powered features:</li>
-            <ul>
-                <li>Analyze & Fix for code correction.</li>
-                <li>Contextual Help for selected keywords.</li>
-                <li>Version Downgrade for compatibility.</li>
-            </ul>
-            <li>Basic editor with file load/save functionality.</li>
+            <li>Added support for local, OpenAI-compatible AI models (e.g., using Ollama).</li>
+            <li>Introduced the first-time setup wizard.</li>
           </ul>
         </div>
       </div>

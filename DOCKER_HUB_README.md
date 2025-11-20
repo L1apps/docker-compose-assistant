@@ -12,7 +12,7 @@ The easiest way to run the assistant is using Docker Compose:
 
     services:
       dca-app:
-        image: tjfx101/docker-compose-assistant:latest
+        image: l1apps/docker-compose-assistant:latest
         container_name: docker-compose-assistant
         ports:
           - "8500:80" 
@@ -20,7 +20,7 @@ The easiest way to run the assistant is using Docker Compose:
 
 Or run it directly with the Docker CLI:
 
-    docker run -d -p 8500:80 --name docker-compose-assistant tjfx101/docker-compose-assistant:latest
+    docker run -d -p 8500:80 --name docker-compose-assistant l1apps/docker-compose-assistant:latest
 
 Once running, access the editor at: **http://localhost:8500**
 
@@ -50,6 +50,11 @@ When you launch the app for the first time, a wizard will guide you. You can als
 *   **Port**: Exposes port `80` inside the container.
 *   **Base Image**: Nginx Alpine (lightweight and fast).
 *   **Architecture**: Supports AMD64 and ARM64.
+
+## 🛠 Support
+
+Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
+For support, email: **services@l1apps.com**
 
 ## 📄 License
 

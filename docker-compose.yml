@@ -6,7 +6,7 @@ services:
     # which provides the most reliable public access.
     # The repository owner must build and push the image to a public Docker Hub
     # repository for this to work.
-    image: tjfx101/docker-compose-assistant:latest
+    image: l1apps/docker-compose-assistant:latest
     
     # To build the image from source instead, comment out the 'image' key above
     # and uncomment the 'build' key below.

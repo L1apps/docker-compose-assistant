@@ -24,7 +24,7 @@ This guide will walk you through deploying the Docker Compose Assistant (DCA) us
         services:
           dca-app:
             # This pulls the public, pre-built image from Docker Hub.
-            image: tjfx101/docker-compose-assistant:latest
+            image: l1apps/docker-compose-assistant:latest
             container_name: docker-compose-assistant
             ports:
               - "8500:80" # You can change the host port (8500) if it's already in use

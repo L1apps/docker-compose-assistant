@@ -1,8 +1,8 @@
-import { Suggestion, ContextualHelpResult, DowngradeResult } from '../types';
+import { Suggestion, ContextualHelpResult } from '../types';
 
 export interface AIProvider {
   getSuggestionsAndCorrections(code: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }>;
   getContextualHelp(keyword: string): Promise<ContextualHelpResult>;
-  downgradeComposeVersion(code: string, targetVersion: string): Promise<DowngradeResult>;
   getExplanation(code: string): Promise<{ explanation: string }>;
+  formatCode(code: string): Promise<{ formattedCode: string }>;
 }

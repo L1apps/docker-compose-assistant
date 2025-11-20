@@ -30,7 +30,7 @@ The recommended method is to use the pre-built image from Docker Hub via Docker 
 
         services:
           dca-app:
-            image: tjfx101/docker-compose-assistant:latest
+            image: l1apps/docker-compose-assistant:latest
             container_name: docker-compose-assistant
             ports:
               - "8500:80" # Change the host port (8500) if needed
@@ -45,7 +45,7 @@ The recommended method is to use the pre-built image from Docker Hub via Docker 
 
 You can also run the container directly with a single command:
 
-    docker run -d -p 8500:80 --name docker-compose-assistant tjfx101/docker-compose-assistant:latest
+    docker run -d -p 8500:80 --name docker-compose-assistant l1apps/docker-compose-assistant:latest
 
 ### Option 3: Deploying with Portainer
 
@@ -59,6 +59,11 @@ Once the container is running, open your web browser and navigate to:
 **[http://localhost:8500](http://localhost:8500)** (or the IP of your server if running remotely).
 
 ---
+
+## Support & Credits
+
+Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
+For support or inquiries, please email: [services@l1apps.com](mailto:services@l1apps.com).
 
 ## Configuring the AI Provider
 

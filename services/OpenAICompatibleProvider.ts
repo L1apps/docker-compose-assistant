@@ -1,4 +1,4 @@
-import { Suggestion, ContextualHelpResult, DowngradeResult, AIProviderConfig } from '../types';
+import { Suggestion, ContextualHelpResult, AIProviderConfig } from '../types';
 import { AIProvider } from './aiProvider';
 
 export class OpenAICompatibleProvider implements AIProvider {
@@ -12,15 +12,30 @@ export class OpenAICompatibleProvider implements AIProvider {
       throw new Error("Base URL and Model Name are required for OpenAI-Compatible Provider.");
     }
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl;
+    this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Ensure no trailing slash
     this.model = config.model;
   }
 
   private handleApiError(error: unknown, context: string): never {
     console.error(`Error fetching ${context} from OpenAI-compatible API:`, error);
     if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-             throw new Error(`Could not connect to the local AI server at ${this.baseUrl}. Please ensure the server is running and the Base URL is correct.`);
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+             throw new Error(`Network Error: Could not connect to ${this.baseUrl}. Ensure the server is running, reachable, and 'OLLAMA_ORIGINS="*"' is set.`);
+        }
+        
+        // Handle 404 errors intelligently
+        if (error.message.includes('404')) {
+            // Extract the server response body if it exists in the error message
+            // Format is typically: "API request failed with status 404: { ... }"
+            const bodyMatch = error.message.match(/API request failed with status 404: (.*)/);
+            const body = bodyMatch ? bodyMatch[1] : '';
+
+            // Check for specific "model not found" error from Ollama/OpenAI
+            if (body.toLowerCase().includes('model') && body.toLowerCase().includes('not found')) {
+                 throw new Error(`Model Error: The model '${this.model}' was not found on the server. Please check the model name in Settings or pull it first.`);
+            }
+
+             throw new Error(`Endpoint Error (404): The server returned 404 at ${this.baseUrl}. If the URL is correct, the model '${this.model}' might not exist. Server message: ${body || 'Not Found'}`);
         }
       throw new Error(`Failed to get ${context} from the API: ${error.message}`);
     }
@@ -69,6 +84,28 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
+  // Helper to remove markdown code fences if the AI includes them in the string value
+  private stripMarkdown(code: string): string {
+    if (!code) return "";
+    let clean = code.trim();
+    // Remove ```yaml or ``` at the start
+    clean = clean.replace(/^```(?:yaml)?\s*/i, '');
+    // Remove ``` at the end
+    clean = clean.replace(/\s*```$/, '');
+    return clean;
+  }
+
+  async formatCode(code: string): Promise<{ formattedCode: string }> {
+    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
+    const prompt = `Format this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
+    try {
+      const result = await this.executeJsonCommand<{ formattedCode: string }>(prompt, systemPrompt);
+      return { formattedCode: this.stripMarkdown(result.formattedCode) };
+    } catch (error) {
+      this.handleApiError(error, "code formatting");
+    }
+  }
+
   async getExplanation(code: string): Promise<{ explanation: string }> {
     const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content and provide a clear, high-level explanation of what it does. Respond with a single JSON object containing an 'explanation' key.`;
     const prompt = `Explain what this docker-compose.yml does:\n\n\`\`\`yaml\n${code}\n\`\`\``;
@@ -80,33 +117,27 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
-  async downgradeComposeVersion(code: string, targetVersion: string): Promise<DowngradeResult> {
-    const systemPrompt = `You are an expert on all versions of the Docker Compose file specification. Your task is to rewrite the provided 'docker-compose.yml' content to be compatible with a specific target version, explaining all changes. Respond with a single JSON object containing 'downgradedCode' and a 'changes' array. The 'changes' array should contain objects with a 'suggestion' key.`;
-    const prompt = `Rewrite the following docker-compose.yml to be compatible with version "${targetVersion}". \n\n\`\`\`yaml\n${code}\n\`\`\``;
-    try {
-      return await this.executeJsonCommand<DowngradeResult>(prompt, systemPrompt);
-    } catch (error) {
-      this.handleApiError(error, `downgrade to version "${targetVersion}"`);
-    }
-  }
-
   async getContextualHelp(keyword: string): Promise<ContextualHelpResult> {
-    const systemPrompt = `You are an expert on Docker Compose. Provide a clear explanation and a simple YAML code example for a given Docker Compose keyword. Respond with a single JSON object containing 'explanation' and 'example' keys.`;
+    const systemPrompt = `You are an expert on Docker Compose. Provide a clear explanation and a simple YAML code example for a given Docker Compose keyword. Respond with a single JSON object containing 'explanation' and 'example' keys. IMPORTANT: The 'example' field must be RAW YAML only. Do NOT wrap the example code in markdown (no \`\`\`yaml).`;
     const prompt = `Provide help for the keyword: "${keyword}"`;
     try {
-      return await this.executeJsonCommand<ContextualHelpResult>(prompt, systemPrompt);
+      const result = await this.executeJsonCommand<ContextualHelpResult>(prompt, systemPrompt);
+      return {
+          explanation: result.explanation,
+          example: this.stripMarkdown(result.example)
+      };
     } catch (error) {
       this.handleApiError(error, `contextual help for "${keyword}"`);
     }
   }
 
   async getSuggestionsAndCorrections(code: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys.`;
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml).`;
     const prompt = `Analyze and correct this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
       const result = await this.executeJsonCommand<{ correctedCode: string; suggestions: Suggestion[] }>(prompt, systemPrompt);
        return { 
-            correctedCode: result.correctedCode.trim(), 
+            correctedCode: this.stripMarkdown(result.correctedCode), 
             suggestions: result.suggestions 
         };
     } catch (error) {

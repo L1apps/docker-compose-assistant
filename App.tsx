@@ -4,7 +4,7 @@ import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { LogoIcon, ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon } from './components/icons';
+import { LogoIcon, ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon } from './components/icons';
 import { HelpModal } from './components/HelpModal';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
@@ -12,7 +12,7 @@ import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
 const APP_VERSION = "1.8.0";
-const DOCKER_HUB_URL = "https://hub.docker.com/r/tjfx101/docker-compose-assistant";
+const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 
 const App: React.FC = () => {
   const [code, setCode] = useState<string>(`# Paste your docker-compose.yml here or load a file.
@@ -296,8 +296,12 @@ services:
 
       <footer className="border-t border-border mt-auto">
         <div className="container mx-auto px-4 lg:px-6 py-3 flex justify-between items-center text-xs text-foreground-muted">
-          <span>Version {APP_VERSION} &copy; {new Date().getFullYear()} DCA Project. Apache 2.0 Licensed.</span>
+          <span>Version {APP_VERSION} &copy; {new Date().getFullYear()} L1Apps. Apache 2.0 Licensed.</span>
           <div className="flex items-center gap-4">
+            <a href="mailto:services@l1apps.com" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+              <MailIcon className="w-4 h-4" />
+              <span>Support</span>
+            </a>
             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <DockerIcon className="w-4 h-4" />
               <span>Docker Hub</span>

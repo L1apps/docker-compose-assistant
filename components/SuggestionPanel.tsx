@@ -8,18 +8,17 @@ interface SuggestionPanelProps {
   suggestions: Suggestion[];
   correctedCode: string;
   isLoading: boolean;
-  isDowngrading: boolean;
   isExplaining: boolean;
+  isFormatting: boolean;
   explanation: string;
   error: string;
   onUseCorrectedCode: () => void;
-  isAiConfigured: boolean;
-  onConfigureAi: () => void;
+  isAIConfigured: boolean;
 }
 
 export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({ 
-  code, suggestions, correctedCode, isLoading, error, onUseCorrectedCode, isAiConfigured, onConfigureAi,
-  isDowngrading, isExplaining, explanation 
+  code, suggestions, correctedCode, isLoading, error, onUseCorrectedCode,
+  isExplaining, isFormatting, explanation, isAIConfigured 
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -31,12 +30,12 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
   };
 
   const renderContent = () => {
-    if (isLoading || isDowngrading || isExplaining) {
+    if (isLoading || isExplaining || isFormatting) {
       let message = 'AI is analyzing your code...';
       if (isExplaining) {
         message = 'AI is explaining your file...';
-      } else if (isDowngrading) {
-        message = 'AI is downgrading your file...';
+      } else if (isFormatting) {
+        message = 'AI is formatting your file...';
       }
 
       return (
@@ -59,29 +58,22 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
         </div>
       );
     }
-
-    if (!isAiConfigured) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full text-foreground-muted text-center">
-          <SettingsIcon className="w-12 h-12" />
-          <p className="mt-4 text-lg">AI Features Disabled</p>
-          <p className="text-sm">Please configure your AI Provider to get feedback.</p>
-          <button
-            onClick={onConfigureAi}
-            className="mt-4 bg-accent text-accent-foreground px-4 py-2 rounded-md hover:bg-accent-hover transition-colors"
-          >
-            Open Settings
-          </button>
-        </div>
-      );
-    }
     
     if (suggestions.length === 0 && !correctedCode && !explanation) {
+      if (!isAIConfigured) {
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-foreground-muted text-center p-4">
+            <SettingsIcon className="w-12 h-12" />
+            <p className="mt-4 text-lg font-semibold text-foreground">AI Not Configured</p>
+            <p className="text-sm mt-1">Please set up your AI provider in the settings (⚙️) to enable analysis and other features.</p>
+          </div>
+        );
+      }
       return (
         <div className="flex flex-col items-center justify-center h-full text-foreground-muted">
           <SparklesIcon className="w-12 h-12" />
           <p className="mt-4 text-lg">Suggestions will appear here</p>
-          <p className="text-sm">Click "Analyze & Fix" to get started.</p>
+          <p className="text-sm">Click "Analyze & Fix" or "Format" to see changes.</p>
         </div>
       );
     }
@@ -99,7 +91,7 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
         {correctedCode && (
           <div>
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-semibold text-foreground">Corrected Code</h3>
+              <h3 className="text-lg font-semibold text-foreground">Proposed Changes</h3>
               <div className="flex gap-2">
                  <button 
                     onClick={handleCopy}
@@ -110,9 +102,9 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
                   </button>
                   <button
                     onClick={onUseCorrectedCode}
-                    className="bg-foreground-muted text-background px-3 py-1 rounded-md text-sm hover:opacity-80 transition-colors"
+                    className="bg-accent text-accent-foreground px-3 py-1 rounded-md text-sm hover:bg-accent-hover transition-colors shadow-sm font-medium"
                   >
-                    Use this code
+                    Apply Changes
                   </button>
               </div>
             </div>
@@ -144,8 +136,8 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
 
   return (
     <div className="flex flex-col bg-background-offset rounded-lg border border-border h-[calc(100vh-150px)] lg:h-auto shadow-sm">
-      <div className="p-3 border-b border-border bg-background-offset/80">
-        <h2 className="text-lg font-semibold text-foreground">AI Feedback</h2>
+      <div className="p-2 border-b border-border bg-background-offset/80">
+        <h2 className="text-sm font-semibold text-foreground px-2">AI Feedback & Preview</h2>
       </div>
       <div className="flex-grow p-4 overflow-y-auto">
         {renderContent()}

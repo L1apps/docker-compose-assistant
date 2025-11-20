@@ -20,6 +20,15 @@ export const SaveIcon: React.FC<IconProps> = ({ className }) => (
   </svg>
 );
 
+export const TrashIcon: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <line x1="10" y1="11" x2="10" y2="17" />
+    <line x1="14" y1="11" x2="14" y2="17" />
+  </svg>
+);
+
 export const SparklesIcon: React.FC<IconProps> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9z"/>
@@ -48,12 +57,21 @@ export const CheckIcon: React.FC<IconProps> = ({ className }) => (
     </svg>
 );
 
-export const HelpIcon: React.FC<IconProps> = ({ className }) => (
+export const TextSearchIcon: React.FC<IconProps> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <circle cx="12" cy="12" r="10" />
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-        <path d="M12 17h.01" />
+        <circle cx="10" cy="10" r="7" />
+        <line x1="21" y1="21" x2="15" y2="15" />
+        <path d="M7 10h6" />
+        <path d="M7 7h3" />
+        <path d="M7 13h3" />
     </svg>
+);
+
+export const CodeIcon: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="16 18 22 12 16 6" />
+    <polyline points="8 6 2 12 8 18" />
+  </svg>
 );
 
 export const ExternalLinkIcon: React.FC<IconProps> = ({ className }) => (
@@ -120,16 +138,31 @@ export const ThemeIcon: React.FC<IconProps> = ({ className }) => (
   </svg>
 );
 
-export const FeedbackIcon: React.FC<IconProps> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
-    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-  </svg>
-);
-
 export const BookOpenIcon: React.FC<IconProps> = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+  </svg>
+);
+
+export const FormatIcon: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="21" y1="10" x2="3" y2="10" />
+    <line x1="21" y1="6" x2="3" y2="6" />
+    <line x1="21" y1="14" x2="3" y2="14" />
+    <line x1="21" y1="18" x2="3" y2="18" />
+  </svg>
+);
+
+export const DockerIcon: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M22.03 9.4c-.09-.59-.44-1.12-.92-1.48L12 1.25a1 1 0 0 0-1.01 0l-9.08 6.67c-.48.36-.83.89-.92 1.48l-.42 2.6H22.45l-.42-2.6zM1.05 13.43v2.33c0 .55.45 1 1 1h1.5v-3.89H1.05zM5.05 16.76V12.9h3.75v3.86H5.05zm5.25 0V12.9h3.75v3.86h-3.75zm5.25 0V12.9h3.75v3.86h-3.75zm5.25-3.86v3.86H22c.55 0 1-.45 1-1v-2.33h-2.45z"/>
+  </svg>
+);
+
+export const MailIcon: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="16" x="2" y="4" rx="2"/>
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
   </svg>
 );
