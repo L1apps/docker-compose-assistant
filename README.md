@@ -10,7 +10,7 @@ Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor design
 - **Smart Formatting**: Auto-format your code with proper YAML spacing and structure, viewing a precise diff before applying changes.
 - **Syntax Snippets**: Quickly insert common Docker Compose blocks (Services, Networks, Volumes, etc.) directly from a dropdown menu.
 - **Structure Navigation**: Automatically detects your services, volumes, and networks for quick navigation within large files.
-- **Contextual Help**: Select any keyword in your file to get a clear explanation and code example.
+- **Contextual Help**: Select any keyword in your file to get a clear explanation and code example directly in the side panel.
 - **File Management**: Easily load your existing `docker-compose.yml` files and save your corrected code.
 - **Multiple Themes**: Choose from light, dark, and dracula themes to suit your preference.
 

@@ -38,17 +38,27 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
            <p>Developed by <a href="https://l1apps.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Level 1 Apps (L1Apps)</a>.</p>
            <p>For support, email us at <a href="mailto:services@l1apps.com" className="text-accent hover:underline">services@l1apps.com</a>.</p>
 
-           <h3>Project Link</h3>
+           <h3>Project Links</h3>
            <p>
-            You can find the official container image for this web application on Docker Hub.
+            You can find the official container image for this web application on Docker Hub and GitHub Container Registry.
           </p>
           <ul className="list-disc pl-5 space-y-1">
               <li><a href={dockerHubUrl} target="_blank" rel="noopener noreferrer">View Image on Docker Hub</a></li>
+              <li>
+                <code className="text-xs bg-background p-1 rounded">ghcr.io/l1apps/docker-compose-assistant:latest</code>
+              </li>
           </ul>
           
           <h3>Version History</h3>
 
-          <h4>v1.8.0 (Latest)</h4>
+          <h4>v1.9.0 (Latest)</h4>
+          <ul>
+             <li><strong>UI Improvement:</strong> Contextual Help now appears in the side panel instead of a popup modal, creating a smoother workflow.</li>
+             <li><strong>Better Formatting:</strong> Explanation text is now rendered with Markdown support (bold, lists, etc.) for improved readability.</li>
+             <li><strong>Bug Fixes:</strong> Fixed issues with inline comment formatting.</li>
+          </ul>
+
+          <h4>v1.8.0</h4>
           <ul>
             <li><strong>Enhanced Formatting:</strong> Formatting now shows a Diff View (Before vs. After) so you can review changes before applying them.</li>
             <li><strong>UI Cleanup:</strong> Replaced bulky buttons with a streamlined icon toolbar.</li>

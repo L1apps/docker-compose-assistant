@@ -5,13 +5,12 @@ import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
 import { ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon } from './components/icons';
-import { HelpModal } from './components/HelpModal';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.8.0";
+const APP_VERSION = "1.9.0";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 
 const App: React.FC = () => {
@@ -32,17 +31,14 @@ services:
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [correctedCode, setCorrectedCode] = useState<string>('');
   const [explanation, setExplanation] = useState<string>('');
+  const [helpContent, setHelpContent] = useState<ContextualHelpResult | null>(null);
+  const [helpKeyword, setHelpKeyword] = useState<string>('');
+  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isExplaining, setIsExplaining] = useState<boolean>(false);
   const [isFormatting, setIsFormatting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
-  const [helpContent, setHelpContent] = useState<ContextualHelpResult | null>(null);
-  const [helpKeyword, setHelpKeyword] = useState<string>('');
-  const [isHelpLoading, setIsHelpLoading] = useState<boolean>(false);
-  const [helpError, setHelpError] = useState<string>('');
 
   const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
   
@@ -92,13 +88,18 @@ services:
     }
   };
 
-  const handleAnalyze = useCallback(async () => {
-    if (!aiProvider) return;
-    setIsLoading(true);
-    setError('');
+  const clearResults = () => {
     setSuggestions([]);
     setCorrectedCode('');
     setExplanation('');
+    setHelpContent(null);
+    setError('');
+  };
+
+  const handleAnalyze = useCallback(async () => {
+    if (!aiProvider) return;
+    setIsLoading(true);
+    clearResults();
     try {
       const result = await aiProvider.getSuggestionsAndCorrections(code);
       setSuggestions(result.suggestions);
@@ -114,10 +115,7 @@ services:
   const handleExplain = useCallback(async () => {
     if (!aiProvider) return;
     setIsExplaining(true);
-    setError('');
-    setSuggestions([]);
-    setCorrectedCode('');
-    setExplanation('');
+    clearResults();
     try {
       const result = await aiProvider.getExplanation(code);
       setExplanation(result.explanation);
@@ -132,10 +130,7 @@ services:
   const handleFormatCode = useCallback(async () => {
     if (!aiProvider) return;
     setIsFormatting(true);
-    setError('');
-    setSuggestions([]);
-    setCorrectedCode('');
-    setExplanation('');
+    clearResults();
     try {
       const result = await aiProvider.formatCode(code);
       // Instead of setting code directly, we set correctedCode to trigger the Diff Viewer
@@ -152,18 +147,16 @@ services:
   const handleGetHelp = useCallback(async (keyword: string) => {
     if (!aiProvider) return;
     setHelpKeyword(keyword);
-    setIsHelpModalOpen(true);
-    setIsHelpLoading(true);
-    setHelpError('');
-    setHelpContent(null);
+    setIsLoading(true);
+    clearResults();
     try {
       const result = await aiProvider.getContextualHelp(keyword);
       setHelpContent(result);
     } catch (e) {
-      setHelpError(e instanceof Error ? e.message : `Failed to get help for "${keyword}".`);
+      setError(e instanceof Error ? e.message : `Failed to get help for "${keyword}".`);
       console.error(e);
     } finally {
-      setIsHelpLoading(false);
+      setIsLoading(false);
     }
   }, [aiProvider]);
   
@@ -174,10 +167,7 @@ services:
       reader.onload = (e) => {
         const text = e.target?.result as string;
         setCode(text);
-        setSuggestions([]);
-        setCorrectedCode('');
-        setExplanation('');
-        setError('');
+        clearResults();
       };
       reader.readAsText(file);
     }
@@ -203,10 +193,7 @@ services:
       return;
     }
     setCode('');
-    setSuggestions([]);
-    setCorrectedCode('');
-    setExplanation('');
-    setError('');
+    clearResults();
   }, [code]);
 
   const handleUseCorrectedCode = () => {
@@ -269,10 +256,12 @@ services:
           code={code}
           suggestions={suggestions}
           correctedCode={correctedCode}
+          explanation={explanation}
+          helpContent={helpContent}
+          helpKeyword={helpKeyword}
           isLoading={isLoading}
           isExplaining={isExplaining}
           isFormatting={isFormatting}
-          explanation={explanation}
           error={error}
           onUseCorrectedCode={handleUseCorrectedCode}
           isAIConfigured={!!aiProvider}
@@ -281,8 +270,6 @@ services:
       
       <input type="file" ref={fileInputRef} onChange={handleFileLoad} className="hidden" accept=".yml,.yaml" />
 
-      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} keyword={helpKeyword} content={helpContent} isLoading={isHelpLoading} error={helpError} />
-      
       <AboutModal isOpen={isAboutModalOpen} onClose={() => setIsAboutModalOpen(false)} version={APP_VERSION} dockerHubUrl={DOCKER_HUB_URL} />
 
       <SettingsModal 

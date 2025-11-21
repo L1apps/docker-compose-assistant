@@ -140,13 +140,17 @@ export class GeminiProvider implements AIProvider {
     const prompt = `
       As an expert on Docker Compose, provide a clear, concise explanation and a simple YAML code example for the following Docker Compose keyword: "${keyword}".
       Focus on the primary use case of the keyword.
-      IMPORTANT: The 'example' field must be RAW YAML. Do NOT wrap the example code in markdown (no \`\`\`yaml).
+      
+      RULES:
+      1. The 'explanation' must be formatted using Markdown (e.g., bold text for emphasis, lists if needed) to be easily readable.
+      2. The 'example' field must be RAW YAML. Do NOT wrap the example code in markdown (no \`\`\`yaml).
+      
       Return the result in JSON format.`;
       
     const schema = {
         type: Type.OBJECT,
         properties: {
-          explanation: { type: Type.STRING },
+          explanation: { type: Type.STRING, description: "Markdown formatted explanation." },
           example: { type: Type.STRING, description: "Raw YAML example code. No markdown." }
         },
         required: ["explanation", "example"]

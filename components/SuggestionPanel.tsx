@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { SparklesIcon, CopyIcon, CheckIcon, SettingsIcon, AlertTriangleIcon } from './icons';
-import { Suggestion } from '../types';
+import { SparklesIcon, CopyIcon, CheckIcon, SettingsIcon, AlertTriangleIcon, InfoIcon } from './icons';
+import { Suggestion, ContextualHelpResult } from '../types';
 import { CodeDiffViewer } from './CodeDiffViewer';
 
 interface SuggestionPanelProps {
   code: string;
   suggestions: Suggestion[];
   correctedCode: string;
+  explanation: string;
+  helpContent: ContextualHelpResult | null;
+  helpKeyword?: string;
   isLoading: boolean;
   isExplaining: boolean;
   isFormatting: boolean;
-  explanation: string;
   error: string;
   onUseCorrectedCode: () => void;
   isAIConfigured: boolean;
@@ -94,7 +96,7 @@ const processInline = (text: string) => {
 
 export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({ 
   code, suggestions, correctedCode, isLoading, error, onUseCorrectedCode,
-  isExplaining, isFormatting, explanation, isAIConfigured 
+  isExplaining, isFormatting, explanation, helpContent, helpKeyword, isAIConfigured 
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -130,6 +132,32 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
           <div>
             <h3 className="font-bold mb-1">An Error Occurred</h3>
             <p className="text-sm">{error}</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Contextual Help Display
+    if (helpContent) {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+             <InfoIcon className="w-5 h-5 text-accent" />
+             <h3 className="text-lg font-semibold text-foreground">Contextual Help: <span className="font-mono text-accent">{helpKeyword}</span></h3>
+          </div>
+          
+          <div>
+            <h4 className="text-md font-bold text-foreground mb-2">Explanation</h4>
+            <div className="prose prose-sm dark:prose-invert max-w-none bg-background p-4 rounded-md text-foreground">
+              <SimpleMarkdown text={helpContent.explanation} />
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="text-md font-bold text-foreground mb-2">Example Usage</h4>
+            <pre className="bg-background p-3 rounded-md overflow-x-auto text-sm text-foreground font-mono border border-border">
+              <code>{helpContent.example}</code>
+            </pre>
           </div>
         </div>
       );

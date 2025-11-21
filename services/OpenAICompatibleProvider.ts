@@ -177,7 +177,11 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async getContextualHelp(keyword: string): Promise<ContextualHelpResult> {
-    const systemPrompt = `You are an expert on Docker Compose. Provide a clear explanation and a simple YAML code example for a given Docker Compose keyword. Respond with a single JSON object containing 'explanation' and 'example' keys. IMPORTANT: The 'example' field must be RAW YAML only. Do NOT wrap the example code in markdown (no \`\`\`yaml).`;
+    const systemPrompt = `You are an expert on Docker Compose. Provide a clear explanation and a simple YAML code example for a given Docker Compose keyword. 
+    RULES:
+    1. The 'explanation' must be formatted using Markdown (e.g., bold text for emphasis, lists if needed) to be easily readable.
+    2. The 'example' field must be RAW YAML only. Do NOT wrap the example code in markdown (no \`\`\`yaml).
+    Respond with a single JSON object containing 'explanation' and 'example' keys.`;
     const prompt = `Provide help for the keyword: "${keyword}"`;
     try {
       const result = await this.executeJsonCommand<ContextualHelpResult>(prompt, systemPrompt);
