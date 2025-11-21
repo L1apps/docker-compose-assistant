@@ -16,6 +16,82 @@ interface SuggestionPanelProps {
   isAIConfigured: boolean;
 }
 
+const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
+  if (!text) return null;
+  
+  // Split by newlines to handle basic block formatting
+  const lines = text.split('\n');
+  const renderedLines = [];
+  let inList = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    const key = i;
+    
+    // Handle Headers
+    if (line.startsWith('### ')) {
+      if (inList) { renderedLines.push(<ul key={`ul-end-${key}`} className="list-disc pl-5 mb-4 space-y-1" />); inList = false; }
+      renderedLines.push(<h3 key={key} className="text-lg font-bold mt-4 mb-2 text-foreground">{processInline(line.substring(4))}</h3>);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      if (inList) { renderedLines.push(<ul key={`ul-end-${key}`} className="list-disc pl-5 mb-4 space-y-1" />); inList = false; }
+      renderedLines.push(<h2 key={key} className="text-xl font-bold mt-4 mb-2 text-foreground">{processInline(line.substring(3))}</h2>);
+      continue;
+    }
+
+    // Handle Lists
+    if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
+       if (!inList) {
+           // Start a new group of list items
+           const listItems = [];
+           let j = i;
+           while(j < lines.length && (lines[j].trim().startsWith('- ') || lines[j].trim().startsWith('* '))) {
+               listItems.push(
+                   <li key={j} className="text-foreground">
+                       {processInline(lines[j].trim().substring(2))}
+                   </li>
+               );
+               j++;
+           }
+           renderedLines.push(<ul key={`ul-${key}`} className="list-disc pl-5 mb-4 space-y-1">{listItems}</ul>);
+           i = j - 1; // Fast forward
+           inList = false; 
+           continue;
+       }
+    }
+    
+    // Handle Empty Lines (Paragraph breaks)
+    if (!line.trim()) {
+        continue;
+    }
+
+    // Default Paragraph
+    if (inList) { inList = false; }
+    renderedLines.push(<p key={key} className="mb-2 text-foreground leading-relaxed">{processInline(line)}</p>);
+  }
+
+  return <div>{renderedLines}</div>;
+};
+
+const processInline = (text: string) => {
+    // Simple Bold processing (**text**)
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={index}>{part.substring(2, part.length - 2)}</strong>;
+        }
+        // Simple code processing (`text`)
+        const codeParts = part.split(/(`.*?`)/g);
+         return codeParts.map((subPart, subIndex) => {
+             if (subPart.startsWith('`') && subPart.endsWith('`')) {
+                 return <code key={`${index}-${subIndex}`} className="bg-background-offset px-1 py-0.5 rounded text-sm font-mono">{subPart.substring(1, subPart.length - 1)}</code>;
+             }
+             return subPart;
+         });
+    });
+};
+
 export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({ 
   code, suggestions, correctedCode, isLoading, error, onUseCorrectedCode,
   isExplaining, isFormatting, explanation, isAIConfigured 
@@ -84,7 +160,7 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-2">File Explanation</h3>
             <div className="prose prose-sm dark:prose-invert max-w-none bg-background p-4 rounded-md text-foreground">
-              {explanation.split('\n').map((line, i) => line.trim() && <p key={i}>{line}</p>)}
+              <SimpleMarkdown text={explanation} />
             </div>
           </div>
         )}

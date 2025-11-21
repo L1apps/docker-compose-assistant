@@ -5,6 +5,7 @@ export class OpenAICompatibleProvider implements AIProvider {
   private apiKey?: string;
   private baseUrl: string;
   private model: string;
+  private timeoutMs: number = 60000; // 60 seconds timeout
 
   constructor(config: AIProviderConfig) {
     if (config.provider !== 'openai-compatible') throw new Error("Invalid config for OpenAICompatibleProvider");
@@ -19,6 +20,9 @@ export class OpenAICompatibleProvider implements AIProvider {
   private handleApiError(error: unknown, context: string): never {
     console.error(`Error fetching ${context} from OpenAI-compatible API:`, error);
     if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+            throw new Error(`Request Timeout: The local AI model took too long to respond (>${this.timeoutMs / 1000}s). Try using a smaller model (like 'gemini-2.5-flash' or 'phi3') or ensure your local server is not overloaded.`);
+        }
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
              throw new Error(`Network Error: Could not connect to ${this.baseUrl}. Ensure the server is running, reachable, and 'OLLAMA_ORIGINS="*"' is set.`);
         }
@@ -50,10 +54,14 @@ export class OpenAICompatibleProvider implements AIProvider {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+
     try {
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
         method: 'POST',
         headers,
+        signal: controller.signal,
         body: JSON.stringify({
           model: this.model,
           messages: [
@@ -64,6 +72,8 @@ export class OpenAICompatibleProvider implements AIProvider {
           temperature: 0.1,
         }),
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorBody = await response.text();
@@ -79,6 +89,7 @@ export class OpenAICompatibleProvider implements AIProvider {
 
       return JSON.parse(content);
     } catch (e) {
+      clearTimeout(timeoutId);
       // Re-throw with context using the specific handler
       throw e;
     }
@@ -96,7 +107,7 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async formatCode(code: string): Promise<{ formattedCode: string }> {
-    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
+    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. Move inline comments to the line above the code. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
     const prompt = `Format this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
     try {
       const result = await this.executeJsonCommand<{ formattedCode: string }>(prompt, systemPrompt);
@@ -107,7 +118,7 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async getExplanation(code: string): Promise<{ explanation: string }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content and provide a clear, high-level explanation of what it does. Respond with a single JSON object containing an 'explanation' key.`;
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content. Provide a clear, structured explanation using Markdown formatting (bold text, bullet points, and paragraphs). Do NOT output raw JSON structure in the text, just the markdown string within the JSON response. Respond with a single JSON object containing an 'explanation' key.`;
     const prompt = `Explain what this docker-compose.yml does:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
       const result = await this.executeJsonCommand<{ explanation: string }>(prompt, systemPrompt);
@@ -132,7 +143,7 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async getSuggestionsAndCorrections(code: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml).`;
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. Ensure all comments are placed on their own line above the code they refer to, not inline. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml).`;
     const prompt = `Analyze and correct this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
       const result = await this.executeJsonCommand<{ correctedCode: string; suggestions: Suggestion[] }>(prompt, systemPrompt);

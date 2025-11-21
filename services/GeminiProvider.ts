@@ -83,6 +83,7 @@ export class GeminiProvider implements AIProvider {
       - Use 2 spaces for indentation.
       - Maintain consistent spacing around colons and hyphens.
       - Ensure proper YAML syntax.
+      - Move inline comments to the line above the item they describe. Do not keep comments on the same line as code.
       - Do not change any values, keys, or the logic of the file. Only fix formatting issues.
       - IMPORTANT: The output 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown code blocks (no \`\`\`yaml).
       
@@ -111,19 +112,21 @@ export class GeminiProvider implements AIProvider {
   async getExplanation(code: string): Promise<{ explanation: string }> {
     const prompt = `
       You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content and provide a clear, high-level explanation of what it does.
-      Focus on the services defined, their purpose, and how they interact.
+      
       Analyze the following \`docker-compose.yml\` content:
       \`\`\`yaml
       ${code}
       \`\`\`
       Your tasks:
       1. Provide a concise explanation of the file's purpose.
+      2. Use Markdown formatting (headings, bullet points, bold text) to make the explanation easy to read.
+      3. Do NOT output raw JSON structure in the text, just the markdown string within the JSON response.
       Return the result in JSON format.`;
     
     const schema = {
         type: Type.OBJECT,
         properties: {
-            explanation: { type: Type.STRING, description: "A high-level explanation of the docker-compose file." },
+            explanation: { type: Type.STRING, description: "A high-level explanation of the docker-compose file, formatted with Markdown." },
         },
         required: ["explanation"],
     };
@@ -173,8 +176,9 @@ export class GeminiProvider implements AIProvider {
       \`\`\`
       Your tasks:
       1. Correct the code (syntax, indentation, deprecated keys, etc.).
-      2. Provide helpful hints and best practices (security, performance, maintainability).
-      3. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml) at the start or end.
+      2. Ensure all comments are placed on their own line above the code they refer to, not inline.
+      3. Provide helpful hints and best practices (security, performance, maintainability).
+      4. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml) at the start or end.
       
       Return the result in JSON format.`;
     

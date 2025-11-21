@@ -4,7 +4,7 @@ import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { LogoIcon, ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon } from './components/icons';
+import { ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon } from './components/icons';
 import { HelpModal } from './components/HelpModal';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
@@ -226,7 +226,6 @@ services:
       <header className="bg-background-offset/80 backdrop-blur-sm border-b border-border p-4 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <LogoIcon className="w-8 h-8 text-accent" />
             <h1 className="text-xl font-bold text-foreground">Docker Compose Assistant</h1>
           </div>
           <div className="flex items-center gap-2">
