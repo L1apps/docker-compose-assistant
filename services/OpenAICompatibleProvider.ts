@@ -144,11 +144,13 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   // Helper to remove markdown code fences if the AI includes them in the string value
-  private stripMarkdown(code: string): string {
-    if (!code) return "";
-    let clean = code.trim();
-    // Remove ```yaml or ``` at the start
-    clean = clean.replace(/^```(?:yaml)?\s*/i, '');
+  private stripMarkdown(text: string): string {
+    if (!text) return "";
+    let clean = text.trim();
+    // Remove ```language (like markdown or yaml) or just ``` at the start
+    clean = clean.replace(/^```[a-zA-Z0-9]*\s*/, '');
+    // Remove explicit "markdown" text if the model outputted it without fences at the start
+    clean = clean.replace(/^markdown\s*/i, '');
     // Remove ``` at the end
     clean = clean.replace(/\s*```$/, '');
     return clean;
@@ -166,11 +168,11 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async getExplanation(code: string): Promise<{ explanation: string }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content. Provide a clear, structured explanation using Markdown formatting (bold text, bullet points, and paragraphs). Output ONLY the raw Markdown text. Do not wrap it in JSON.`;
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content. Provide a clear, structured explanation using Markdown formatting (bold text, bullet points, and paragraphs). Output ONLY the raw Markdown text. Do not wrap it in JSON. Do not wrap the output in \`\`\`markdown code fences.`;
     const prompt = `Explain what this docker-compose.yml does:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
       const result = await this.executeTextCommand(prompt, systemPrompt);
-       return { explanation: result };
+       return { explanation: this.stripMarkdown(result) };
     } catch (error) {
       this.handleApiError(error, "file explanation");
     }

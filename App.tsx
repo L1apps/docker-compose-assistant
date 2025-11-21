@@ -4,14 +4,15 @@ import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon } from './components/icons';
+import { ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon, GitHubIcon } from './components/icons';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.9.0";
+const APP_VERSION = "1.9.1";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
+const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 
 const App: React.FC = () => {
   const [code, setCode] = useState<string>(`# Paste your docker-compose.yml here or load a file.
@@ -98,12 +99,19 @@ services:
 
   const handleAnalyze = useCallback(async () => {
     if (!aiProvider) return;
+    
+    if (!code.trim()) {
+        setError("Please enter some content in the editor before analyzing.");
+        return;
+    }
+
     setIsLoading(true);
     clearResults();
     try {
       const result = await aiProvider.getSuggestionsAndCorrections(code);
-      setSuggestions(result.suggestions);
-      setCorrectedCode(result.correctedCode);
+      // Defensive check: ensure suggestions is an array to prevent crashes
+      setSuggestions(Array.isArray(result.suggestions) ? result.suggestions : []);
+      setCorrectedCode(result.correctedCode || '');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred.');
       console.error(e);
@@ -114,11 +122,17 @@ services:
 
   const handleExplain = useCallback(async () => {
     if (!aiProvider) return;
+    
+    if (!code.trim()) {
+        setError("Please enter some content in the editor to explain.");
+        return;
+    }
+    
     setIsExplaining(true);
     clearResults();
     try {
       const result = await aiProvider.getExplanation(code);
-      setExplanation(result.explanation);
+      setExplanation(result.explanation || 'No explanation generated.');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred while generating the explanation.');
       console.error(e);
@@ -129,12 +143,18 @@ services:
   
   const handleFormatCode = useCallback(async () => {
     if (!aiProvider) return;
+    
+    if (!code.trim()) {
+        setError("Please enter some content in the editor to format.");
+        return;
+    }
+
     setIsFormatting(true);
     clearResults();
     try {
       const result = await aiProvider.formatCode(code);
       // Instead of setting code directly, we set correctedCode to trigger the Diff Viewer
-      setCorrectedCode(result.formattedCode);
+      setCorrectedCode(result.formattedCode || '');
       setSuggestions([{ suggestion: "The code has been formatted to standard YAML spacing and syntax standards." }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred while formatting the code.');
@@ -225,6 +245,9 @@ services:
              <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors" title="View on Docker Hub">
                 <DockerIcon className="w-5 h-5" />
             </a>
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors" title="View on GitHub">
+                <GitHubIcon className="w-5 h-5" />
+            </a>
             <button onClick={() => setIsSettingsModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="AI Provider Settings">
               <SettingsIcon className="w-5 h-5" />
             </button>
@@ -265,6 +288,7 @@ services:
           error={error}
           onUseCorrectedCode={handleUseCorrectedCode}
           isAIConfigured={!!aiProvider}
+          aiProviderConfig={aiProviderConfig}
         />
       </main>
       
@@ -291,6 +315,10 @@ services:
             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <DockerIcon className="w-4 h-4" />
               <span>Docker Hub</span>
+            </a>
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+              <GitHubIcon className="w-4 h-4" />
+              <span>GitHub</span>
             </a>
           </div>
         </div>

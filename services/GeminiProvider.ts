@@ -65,11 +65,13 @@ export class GeminiProvider implements AIProvider {
   }
   
   // Helper to remove markdown code fences if the AI includes them in the string value
-  private stripMarkdown(code: string): string {
-    if (!code) return "";
-    let clean = code.trim();
-    // Remove ```yaml or ``` at the start
-    clean = clean.replace(/^```(?:yaml)?\s*/i, '');
+  private stripMarkdown(text: string): string {
+    if (!text) return "";
+    let clean = text.trim();
+    // Remove ```language (like markdown or yaml) or just ``` at the start
+    clean = clean.replace(/^```[a-zA-Z0-9]*\s*/, '');
+    // Remove explicit "markdown" text if the model outputted it without fences at the start
+    clean = clean.replace(/^markdown\s*/i, '');
     // Remove ``` at the end
     clean = clean.replace(/\s*```$/, '');
     return clean;
@@ -120,7 +122,7 @@ export class GeminiProvider implements AIProvider {
       Your tasks:
       1. Provide a concise explanation of the file's purpose.
       2. Use Markdown formatting (headings, bullet points, bold text) to make the explanation easy to read.
-      3. Do NOT output JSON. Output valid Markdown text only.
+      3. Do NOT output JSON. Output valid Markdown text only. Do not wrap the output in \`\`\`markdown.
       `;
     
     try {
@@ -130,7 +132,7 @@ export class GeminiProvider implements AIProvider {
             contents: prompt,
             // No responseSchema or responseMimeType needed for plain text/markdown
         });
-        return { explanation: response.text || "No explanation generated." };
+        return { explanation: this.stripMarkdown(response.text || "No explanation generated.") };
     } catch (error) {
         this.handleApiError(error, "file explanation");
     }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SparklesIcon, CopyIcon, CheckIcon, SettingsIcon, AlertTriangleIcon, InfoIcon } from './icons';
-import { Suggestion, ContextualHelpResult } from '../types';
+import { Suggestion, ContextualHelpResult, AIProviderConfig } from '../types';
 import { CodeDiffViewer } from './CodeDiffViewer';
 
 interface SuggestionPanelProps {
@@ -16,6 +16,7 @@ interface SuggestionPanelProps {
   error: string;
   onUseCorrectedCode: () => void;
   isAIConfigured: boolean;
+  aiProviderConfig: AIProviderConfig | null;
 }
 
 const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
@@ -77,6 +78,7 @@ const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
 };
 
 const processInline = (text: string) => {
+    if (!text) return null;
     // Simple Bold processing (**text**)
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
@@ -96,7 +98,7 @@ const processInline = (text: string) => {
 
 export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({ 
   code, suggestions, correctedCode, isLoading, error, onUseCorrectedCode,
-  isExplaining, isFormatting, explanation, helpContent, helpKeyword, isAIConfigured 
+  isExplaining, isFormatting, explanation, helpContent, helpKeyword, isAIConfigured, aiProviderConfig
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -163,7 +165,10 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
       );
     }
     
-    if (suggestions.length === 0 && !correctedCode && !explanation) {
+    // Safe check for suggestions array
+    const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
+    
+    if (safeSuggestions.length === 0 && !correctedCode && !explanation) {
       if (!isAIConfigured) {
         return (
           <div className="flex flex-col items-center justify-center h-full text-foreground-muted text-center p-4">
@@ -178,6 +183,18 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
           <SparklesIcon className="w-12 h-12" />
           <p className="mt-4 text-lg">Suggestions will appear here</p>
           <p className="text-sm">Click "Analyze & Fix" or "Format" to see changes.</p>
+          
+          {isAIConfigured && aiProviderConfig && (
+             <div className="mt-8 p-4 bg-background rounded-md border border-border text-xs text-foreground-muted flex flex-col items-center max-w-xs text-center shadow-sm">
+                <span className="font-semibold mb-1 uppercase tracking-wider opacity-70">Currently using the following AI Model:</span>
+                <div className="flex flex-col items-center gap-1 mt-1">
+                    <span className="font-bold text-foreground text-sm">
+                        {aiProviderConfig.provider === 'gemini' ? 'Google Gemini' : 'Local AI'}
+                    </span>
+                    <span className="font-mono text-accent text-sm bg-accent/10 px-2 py-0.5 rounded">{aiProviderConfig.model}</span>
+                </div>
+             </div>
+          )}
         </div>
       );
     }
@@ -215,12 +232,12 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
             <CodeDiffViewer oldCode={code} newCode={correctedCode} />
           </div>
         )}
-        {suggestions.length > 0 && (
+        {safeSuggestions.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-2">Suggestions & Explanations</h3>
             <div className="prose prose-sm dark:prose-invert max-w-none bg-background p-4 rounded-md">
               <ul className="list-disc pl-5 space-y-4">
-                {suggestions.map((item, index) => (
+                {safeSuggestions.map((item, index) => (
                   <li key={index} className="text-foreground">
                     {item.suggestion}
                     {item.example && (

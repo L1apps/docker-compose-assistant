@@ -44,6 +44,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           </p>
           <ul className="list-disc pl-5 space-y-1">
               <li><a href={dockerHubUrl} target="_blank" rel="noopener noreferrer">View Image on Docker Hub</a></li>
+              <li><a href="https://github.com/L1apps/docker-compose-assistant" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">View Source on GitHub</a></li>
               <li>
                 <code className="text-xs bg-background p-1 rounded">ghcr.io/l1apps/docker-compose-assistant:latest</code>
               </li>
@@ -51,11 +52,17 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           
           <h3>Version History</h3>
 
-          <h4>v1.9.0 (Latest)</h4>
+          <h4>v1.9.1 (Latest)</h4>
+          <ul>
+             <li><strong>Fix:</strong> Resolved issue where analyzing empty files caused the application to crash.</li>
+             <li><strong>Improvement:</strong> Explanation text no longer displays markdown syntax artifacts.</li>
+             <li><strong>UI:</strong> Added explicit AI Model display in the suggestions panel.</li>
+          </ul>
+
+          <h4>v1.9.0</h4>
           <ul>
              <li><strong>UI Improvement:</strong> Contextual Help now appears in the side panel instead of a popup modal, creating a smoother workflow.</li>
              <li><strong>Better Formatting:</strong> Explanation text is now rendered with Markdown support (bold, lists, etc.) for improved readability.</li>
-             <li><strong>Bug Fixes:</strong> Fixed issues with inline comment formatting.</li>
           </ul>
 
           <h4>v1.8.0</h4>
@@ -63,30 +70,11 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
             <li><strong>Enhanced Formatting:</strong> Formatting now shows a Diff View (Before vs. After) so you can review changes before applying them.</li>
             <li><strong>UI Cleanup:</strong> Replaced bulky buttons with a streamlined icon toolbar.</li>
             <li><strong>Better Navigation:</strong> Added a "Jump to Section" feature to quickly scroll to services, networks, or volumes.</li>
-            <li><strong>Deprecated Feature Removal:</strong> Removed the Docker Compose Version Downgrade feature as it is no longer relevant for modern Docker environments.</li>
-          </ul>
-
-           <h4>v1.7.0</h4>
-          <ul>
-            <li>Improved application robustness by adding a global Error Boundary to catch unexpected errors and prevent crashes.</li>
-            <li>Enhanced the visual display for API errors in the feedback panel.</li>
           </ul>
           
           <h4>v1.6.0</h4>
           <ul>
             <li>Rebranded application to "Docker Compose Assistant" (DCA).</li>
-            <li>Designed a new cursive-style "DCA" logo.</li>
-          </ul>
-
-          <h4>v1.5.0</h4>
-          <ul>
-            <li>Implemented a full theming system with multiple themes (Light, Dark, Dracula).</li>
-          </ul>
-
-          <h4>v1.2.0</h4>
-          <ul>
-            <li>Added support for local, OpenAI-compatible AI models (e.g., using Ollama).</li>
-            <li>Introduced the first-time setup wizard.</li>
           </ul>
         </div>
       </div>
