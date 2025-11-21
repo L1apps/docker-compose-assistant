@@ -1,6 +1,6 @@
 # Deploying Docker Compose Assistant with Portainer
 
-This guide will walk you through deploying the Docker Compose Assistant (DCA) using a [Portainer](https://www.portainer.io/) Stack. This method is fast, easy, and works by pulling the pre-built public image directly from Docker Hub.
+This guide will walk you through deploying the Docker Compose Assistant (DCA) using a [Portainer](https://www.portainer.io/) Stack. This method is fast, easy, and works by pulling the pre-built public image directly from Docker Hub or GitHub Container Registry.
 
 ### Prerequisites
 
@@ -25,6 +25,10 @@ This guide will walk you through deploying the Docker Compose Assistant (DCA) us
           dca-app:
             # This pulls the public, pre-built image from Docker Hub.
             image: l1apps/docker-compose-assistant:latest
+            
+            # Alternative: Pull from GitHub Container Registry
+            # image: ghcr.io/l1apps/docker-compose-assistant:latest
+            
             container_name: docker-compose-assistant
             ports:
               - "8500:80" # You can change the host port (8500) if it's already in use

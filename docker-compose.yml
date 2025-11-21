@@ -8,7 +8,10 @@ services:
     # repository for this to work.
     image: l1apps/docker-compose-assistant:latest
     
-    # To build the image from source instead, comment out the 'image' key above
+    # Alternative: Pull from GitHub Container Registry (GHCR)
+    # image: ghcr.io/l1apps/docker-compose-assistant:latest
+    
+    # To build the image from source instead, comment out the 'image' keys above
     # and uncomment the 'build' key below.
     # build: .
 

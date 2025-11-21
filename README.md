@@ -16,7 +16,7 @@ Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor design
 
 ## Deployment
 
-The recommended method is to use the pre-built image from Docker Hub via Docker Compose or the Docker CLI.
+You can pull the pre-built image from **Docker Hub** or **GitHub Container Registry (GHCR)**.
 
 ### Prerequisites
 
@@ -28,9 +28,14 @@ The recommended method is to use the pre-built image from Docker Hub via Docker 
 1.  **Create `docker-compose.yml`:**
     Create a file named `docker-compose.yml` and paste the content below.
 
-        :
+        services:
           dca-app:
+            # Pull from Docker Hub
             image: l1apps/docker-compose-assistant:latest
+            
+            # OR Pull from GitHub Container Registry
+            # image: ghcr.io/l1apps/docker-compose-assistant:latest
+            
             container_name: docker-compose-assistant
             ports:
               - "8500:80" # Change the host port (8500) if needed
@@ -43,9 +48,15 @@ The recommended method is to use the pre-built image from Docker Hub via Docker 
 
 ### Option 2: Using Docker CLI
 
-You can also run the container directly with a single command:
+You can also run the container directly with a single command.
+
+**Using Docker Hub:**
 
     docker run -d -p 8500:80 --name docker-compose-assistant l1apps/docker-compose-assistant:latest
+
+**Using GitHub Container Registry:**
+
+    docker run -d -p 8500:80 --name docker-compose-assistant ghcr.io/l1apps/docker-compose-assistant:latest
 
 ### Option 3: Deploying with Portainer
 
@@ -63,6 +74,7 @@ Once the container is running, open your web browser and navigate to:
 ## Support & Credits
 
 Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
+For support or inquiries, please visit our website.
 
 ## Configuring the AI Provider
 

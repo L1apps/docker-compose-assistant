@@ -8,11 +8,16 @@ The Docker Compose Assistant is a privacy-first web application designed to help
 
 ## 🚀 Quick Start
 
-The easiest way to run the assistant is using Docker Compose:
+The easiest way to run the assistant is using Docker Compose. You can pull from Docker Hub or GitHub Container Registry.
 
     services:
       dca-app:
+        # Docker Hub
         image: l1apps/docker-compose-assistant:latest
+        
+        # GitHub Container Registry
+        # image: ghcr.io/l1apps/docker-compose-assistant:latest
+        
         container_name: docker-compose-assistant
         ports:
           - "8500:80" 
@@ -20,7 +25,11 @@ The easiest way to run the assistant is using Docker Compose:
 
 Or run it directly with the Docker CLI:
 
+    # Docker Hub
     docker run -d -p 8500:80 --name docker-compose-assistant l1apps/docker-compose-assistant:latest
+
+    # GitHub Container Registry
+    docker run -d -p 8500:80 --name docker-compose-assistant ghcr.io/l1apps/docker-compose-assistant:latest
 
 Once running, access the editor at: **http://localhost:8500**
 
@@ -54,7 +63,7 @@ When you launch the app for the first time, a wizard will guide you. You can als
 ## 🛠 Support
 
 Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
-
+For support or inquiries, please visit our website.
 
 ## 📄 License
 
