@@ -52,9 +52,15 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           
           <h3>Version History</h3>
 
-          <h4>v1.9.1 (Latest)</h4>
+          <h4>v1.9.2 (Latest)</h4>
           <ul>
-             <li><strong>Fix:</strong> Resolved issue where analyzing empty files caused the application to crash.</li>
+             <li><strong>Feature:</strong> Added GitHub repository link to the application header and footer.</li>
+             <li><strong>UI:</strong> Added disclaimer regarding AI accuracy in the feedback panel.</li>
+             <li><strong>Fix:</strong> Resolved potential crash when analyzing an empty editor.</li>
+          </ul>
+
+          <h4>v1.9.1</h4>
+          <ul>
              <li><strong>Improvement:</strong> Explanation text no longer displays markdown syntax artifacts.</li>
              <li><strong>UI:</strong> Added explicit AI Model display in the suggestions panel.</li>
           </ul>

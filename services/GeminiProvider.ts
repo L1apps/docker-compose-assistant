@@ -67,14 +67,23 @@ export class GeminiProvider implements AIProvider {
   // Helper to remove markdown code fences if the AI includes them in the string value
   private stripMarkdown(text: string): string {
     if (!text) return "";
+    
+    // If text is wrapped in code fences, extract the content.
+    // This handles "Here is the output:\n```markdown\nCONTENT\n```" by returning CONTENT.
+    // Regex matches ``` followed by optional language, then content, then ```.
+    const fencedMatch = text.match(/```[a-zA-Z0-9]*\s*([\s\S]*?)```/);
+    if (fencedMatch) {
+        return fencedMatch[1].trim();
+    }
+    
     let clean = text.trim();
-    // Remove ```language (like markdown or yaml) or just ``` at the start
-    clean = clean.replace(/^```[a-zA-Z0-9]*\s*/, '');
+    // Fallback cleanup for start fences that might have spaces or missing language
+    clean = clean.replace(/^```\s*[a-zA-Z0-9]*\s*/, '');
     // Remove explicit "markdown" text if the model outputted it without fences at the start
     clean = clean.replace(/^markdown\s*/i, '');
     // Remove ``` at the end
     clean = clean.replace(/\s*```$/, '');
-    return clean;
+    return clean.trim();
   }
   
   async formatCode(code: string): Promise<{ formattedCode: string }> {

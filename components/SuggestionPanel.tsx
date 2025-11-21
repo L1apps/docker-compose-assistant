@@ -263,6 +263,12 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
       <div className="flex-grow p-4 overflow-y-auto">
         {renderContent()}
       </div>
+      <div className="p-2 border-t border-border bg-background/50 text-[10px] text-center text-foreground-muted">
+        <span className="flex items-center justify-center gap-1">
+          <InfoIcon className="w-3 h-3" />
+          Accuracy depends on AI and source of data. Please review all code.
+        </span>
+      </div>
     </div>
   );
 };

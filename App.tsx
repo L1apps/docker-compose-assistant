@@ -10,7 +10,7 @@ import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.9.1";
+const APP_VERSION = "1.9.2";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 
@@ -101,6 +101,7 @@ services:
     if (!aiProvider) return;
     
     if (!code.trim()) {
+        clearResults();
         setError("Please enter some content in the editor before analyzing.");
         return;
     }
@@ -124,6 +125,7 @@ services:
     if (!aiProvider) return;
     
     if (!code.trim()) {
+        clearResults();
         setError("Please enter some content in the editor to explain.");
         return;
     }
@@ -145,6 +147,7 @@ services:
     if (!aiProvider) return;
     
     if (!code.trim()) {
+        clearResults();
         setError("Please enter some content in the editor to format.");
         return;
     }
