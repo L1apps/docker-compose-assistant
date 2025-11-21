@@ -95,6 +95,54 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
+  private async executeTextCommand(prompt: string, systemPrompt: string): Promise<string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+
+    try {
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers,
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: this.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt }
+          ],
+          // No response_format for raw text
+          temperature: 0.1,
+        }),
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+      }
+      
+      const result = await response.json();
+      const content = result.choices[0]?.message?.content;
+      
+      if (!content) {
+          throw new Error("API returned an empty response.");
+      }
+
+      return content;
+    } catch (e) {
+      clearTimeout(timeoutId);
+      throw e;
+    }
+  }
+
   // Helper to remove markdown code fences if the AI includes them in the string value
   private stripMarkdown(code: string): string {
     if (!code) return "";
@@ -118,11 +166,11 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async getExplanation(code: string): Promise<{ explanation: string }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content. Provide a clear, structured explanation using Markdown formatting (bold text, bullet points, and paragraphs). Do NOT output raw JSON structure in the text, just the markdown string within the JSON response. Respond with a single JSON object containing an 'explanation' key.`;
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content. Provide a clear, structured explanation using Markdown formatting (bold text, bullet points, and paragraphs). Output ONLY the raw Markdown text. Do not wrap it in JSON.`;
     const prompt = `Explain what this docker-compose.yml does:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
-      const result = await this.executeJsonCommand<{ explanation: string }>(prompt, systemPrompt);
-       return result;
+      const result = await this.executeTextCommand(prompt, systemPrompt);
+       return { explanation: result };
     } catch (error) {
       this.handleApiError(error, "file explanation");
     }

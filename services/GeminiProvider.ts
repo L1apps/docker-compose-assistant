@@ -120,20 +120,17 @@ export class GeminiProvider implements AIProvider {
       Your tasks:
       1. Provide a concise explanation of the file's purpose.
       2. Use Markdown formatting (headings, bullet points, bold text) to make the explanation easy to read.
-      3. Do NOT output raw JSON structure in the text, just the markdown string within the JSON response.
-      Return the result in JSON format.`;
-    
-    const schema = {
-        type: Type.OBJECT,
-        properties: {
-            explanation: { type: Type.STRING, description: "A high-level explanation of the docker-compose file, formatted with Markdown." },
-        },
-        required: ["explanation"],
-    };
+      3. Do NOT output JSON. Output valid Markdown text only.
+      `;
     
     try {
-        const result = await this.executeJsonCommand<{ explanation: string }>(prompt, schema);
-        return result;
+        const ai = this.getAI();
+        const response = await ai.models.generateContent({
+            model: this.model,
+            contents: prompt,
+            // No responseSchema or responseMimeType needed for plain text/markdown
+        });
+        return { explanation: response.text || "No explanation generated." };
     } catch (error) {
         this.handleApiError(error, "file explanation");
     }
