@@ -166,8 +166,10 @@ export class OpenAICompatibleProvider implements AIProvider {
   }
 
   async formatCode(code: string, dockerVersion?: string): Promise<{ formattedCode: string }> {
-    const versionInstruction = dockerVersion ? `Ensure the syntax follows Docker Compose version ${dockerVersion}.` : '';
-    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. ${versionInstruction} Move inline comments to the line above the code. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
+    const versionInstruction = dockerVersion 
+      ? `Ensure the syntax follows Docker Compose version ${dockerVersion}. IMPORTANT: You MUST update the top-level 'version' property in the YAML to strictly equal '${dockerVersion}' (e.g., "version: '${dockerVersion}'").` 
+      : '';
+    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. ${versionInstruction} Move inline comments to the line above the code. Do not alter any values (other than the version key if specified), keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
     const prompt = `Format this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
     try {
       const result = await this.executeJsonCommand<{ formattedCode: string }>(prompt, systemPrompt);

@@ -54,7 +54,14 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           
           <h3>Version History</h3>
 
-          <h4>v1.10.1 (Latest)</h4>
+          <h4>v1.10.2 (Latest)</h4>
+          <ul>
+            <li><strong>Logic Update:</strong> "Format to Ver" now immediately formats the code in the editor to the selected version.</li>
+            <li><strong>Fix:</strong> Fixed an issue where the "Jump To" feature would not properly highlight the selected code section.</li>
+            <li><strong>UI:</strong> Updated icons for Themes and About actions.</li>
+          </ul>
+
+          <h4>v1.10.1</h4>
           <ul>
             <li><strong>Functionality:</strong> Selecting a target version ("Format to Ver") now automatically formats the code to that standard.</li>
             <li><strong>UI Update:</strong> Redesigned toolbars with standard dropdowns for Insert Snippet and Jump To.</li>
@@ -68,13 +75,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
              <li><strong>Version Control:</strong> Added a Docker Compose version selector to target specific syntax requirements (e.g., v3.8, v2.4).</li>
              <li><strong>Branding:</strong> Updated icons and colors for better visibility and brand alignment.</li>
              <li><strong>Warnings:</strong> Enhanced accuracy warnings to be more prominent.</li>
-          </ul>
-
-          <h4>v1.9.2</h4>
-          <ul>
-             <li><strong>Feature:</strong> Added GitHub repository link to the application header and footer.</li>
-             <li><strong>UI:</strong> Added disclaimer regarding AI accuracy in the feedback panel.</li>
-             <li><strong>Fix:</strong> Resolved potential crash when analyzing an empty editor.</li>
           </ul>
         </div>
       </div>

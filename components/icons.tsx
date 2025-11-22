@@ -136,12 +136,8 @@ export const ChevronDownIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 export const PaletteIcon: React.FC<IconProps> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.66-.75 1.66-1.68 0-.44-.17-.84-.44-1.13-.29-.29-.44-.66-.44-1.12 0-.93.75-1.69 1.68-1.69h1.91c2.56 0 4.63-2.13 4.63-4.75C21 6.87 16.97 2 12 2zm-5.5 8c-.83 0-1.5-.67-1.5-1.5S5.67 7 6.5 7 8 7.67 8 8.5 7.33 10 6.5 10zm3.5-4c-.83 0-1.5-.67-1.5-1.5S9.17 3 10 3s1.5.67 1.5 1.5S10.83 6 10 6zm4 0c-.83 0-1.5-.67-1.5-1.5S13.17 3 14 3s1.5.67 1.5 1.5S14.83 6 14 6zm3.5 4c-.83 0-1.5-.67-1.5-1.5S19.17 7 20 7s1.5.67 1.5 1.5S20.83 10 20 10z"/>
   </svg>
 );
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ThemeIcon } from './icons';
+import { PaletteIcon } from './icons';
 
 export type Theme = 'light' | 'dark' | 'dracula';
 const themes: { name: Theme, label: string }[] = [
@@ -36,7 +36,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ theme, setTheme })
         className="flex items-center gap-2 p-2 rounded-md hover:bg-background-offset transition-colors"
         title="Change theme"
       >
-        <ThemeIcon className="w-5 h-5" />
+        <PaletteIcon className="w-5 h-5" />
         <span className="text-sm font-medium sr-only">{currentThemeLabel}</span>
       </button>
       {isOpen && (

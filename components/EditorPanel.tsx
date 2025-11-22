@@ -82,12 +82,15 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     let charCount = 0;
     
     lines.forEach((line, index) => {
-      const lineLength = line.length + 1; // +1 for newline character
+      // Standardize line length calculation. 
+      const lineLength = line.length + 1; 
+      
+      // Regex to match top-level keys like "services:", "version:", "networks:"
       const match = line.match(/^([a-z_]+):/);
       
       if (match) {
         foundSections.push({
-          id: match[1],
+          id: match[1] + '-' + index, // Make ID unique with index
           line: index,
           label: match[1].charAt(0).toUpperCase() + match[1].slice(1),
           startIndex: charCount,
@@ -137,13 +140,18 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       
       const section = sections.find(s => s.id === sectionId);
       if (section && textareaRef.current) {
-        textareaRef.current.focus();
-        textareaRef.current.setSelectionRange(section.startIndex, section.endIndex);
-        // Scroll logic: line index * line height (approx 20px)
-        textareaRef.current.scrollTop = section.line * 20;
+        const textarea = textareaRef.current;
+        
+        textarea.focus();
+        textarea.setSelectionRange(section.startIndex, section.endIndex);
+        
+        // Calculate approximate scroll position assuming 20px line height
+        const lineHeight = 20;
+        const scrollPos = Math.max(0, (section.line - 2) * lineHeight); // 2 lines context
+        textarea.scrollTop = scrollPos;
       }
       
-      // Reset the select so we can jump to the same section again if needed (though unlikely)
+      // Reset the select
       e.target.value = "";
   };
 

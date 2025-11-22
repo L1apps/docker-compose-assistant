@@ -4,13 +4,13 @@ import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { ExternalLinkIcon, SquareInfoIcon, DockerIcon, SettingsIcon, MailIcon, GitHubIcon, PaletteIcon } from './components/icons';
+import { ExternalLinkIcon, SquareInfoIcon, DockerIcon, SettingsIcon, MailIcon, GitHubIcon } from './components/icons';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.10.1";
+const APP_VERSION = "1.10.2";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 
@@ -155,8 +155,18 @@ services:
     clearResults();
     try {
       const result = await aiProvider.formatCode(code, version);
-      setCorrectedCode(result.formattedCode || '');
-      setSuggestions([{ suggestion: `The code has been formatted to standard YAML spacing and Docker Compose ${version} syntax standards.` }]);
+      
+      // Directly update the editor with the formatted code
+      if (result.formattedCode) {
+        setCode(result.formattedCode);
+        setSuggestions([{ 
+            suggestion: `Code successfully formatted to Docker Compose version ${version}.` 
+        }]);
+        // We do NOT set correctedCode here, so it doesn't show the diff view, 
+        // effectively acting like a standard "Format Document" command.
+      } else {
+        setError("Formatting returned no result.");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred while formatting the code.');
       console.error(e);

@@ -87,7 +87,9 @@ export class GeminiProvider implements AIProvider {
   }
   
   async formatCode(code: string, dockerVersion?: string): Promise<{ formattedCode: string }> {
-    const versionInstruction = dockerVersion ? `Ensure the syntax and structure strictly adhere to Docker Compose version ${dockerVersion}.` : 'Adhere to the Docker Compose version specified in the file, or default to the latest stable version.';
+    const versionInstruction = dockerVersion 
+        ? `Ensure the syntax and structure strictly adhere to Docker Compose version ${dockerVersion}. IMPORTANT: You MUST update the top-level 'version' property in the YAML to strictly equal '${dockerVersion}' (e.g., "version: '${dockerVersion}'").` 
+        : 'Adhere to the Docker Compose version specified in the file, or default to the latest stable version.';
 
     const prompt = `
       You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the following docker-compose.yml content.
@@ -98,7 +100,7 @@ export class GeminiProvider implements AIProvider {
       - Maintain consistent spacing around colons and hyphens.
       - Ensure proper YAML syntax.
       - Move inline comments to the line above the item they describe. Do not keep comments on the same line as code.
-      - Do not change any values, keys, or the logic of the file. Only fix formatting issues.
+      - Do not change any values (other than the version key if specified), keys, or the logic of the file. Only fix formatting issues.
       - IMPORTANT: The output 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown code blocks (no \`\`\`yaml).
       
       Content to format:
