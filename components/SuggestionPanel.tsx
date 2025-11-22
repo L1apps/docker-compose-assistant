@@ -22,7 +22,6 @@ interface SuggestionPanelProps {
 const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
   if (!text) return null;
   
-  // Split by newlines to handle basic block formatting
   const lines = text.split('\n');
   const renderedLines = [];
   let inList = false;
@@ -31,7 +30,6 @@ const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
     let line = lines[i];
     const key = i;
     
-    // Handle Headers
     if (line.startsWith('### ')) {
       if (inList) { renderedLines.push(<ul key={`ul-end-${key}`} className="list-disc pl-5 mb-4 space-y-1" />); inList = false; }
       renderedLines.push(<h3 key={key} className="text-lg font-bold mt-4 mb-2 text-foreground">{processInline(line.substring(4))}</h3>);
@@ -43,10 +41,8 @@ const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
       continue;
     }
 
-    // Handle Lists
     if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
        if (!inList) {
-           // Start a new group of list items
            const listItems = [];
            let j = i;
            while(j < lines.length && (lines[j].trim().startsWith('- ') || lines[j].trim().startsWith('* '))) {
@@ -58,18 +54,16 @@ const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
                j++;
            }
            renderedLines.push(<ul key={`ul-${key}`} className="list-disc pl-5 mb-4 space-y-1">{listItems}</ul>);
-           i = j - 1; // Fast forward
+           i = j - 1; 
            inList = false; 
            continue;
        }
     }
     
-    // Handle Empty Lines (Paragraph breaks)
     if (!line.trim()) {
         continue;
     }
 
-    // Default Paragraph
     if (inList) { inList = false; }
     renderedLines.push(<p key={key} className="mb-2 text-foreground leading-relaxed">{processInline(line)}</p>);
   }
@@ -79,13 +73,11 @@ const SimpleMarkdown: React.FC<{ text: string }> = ({ text }) => {
 
 const processInline = (text: string) => {
     if (!text) return null;
-    // Simple Bold processing (**text**)
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
         if (part.startsWith('**') && part.endsWith('**')) {
             return <strong key={index}>{part.substring(2, part.length - 2)}</strong>;
         }
-        // Simple code processing (`text`)
         const codeParts = part.split(/(`.*?`)/g);
          return codeParts.map((subPart, subIndex) => {
              if (subPart.startsWith('`') && subPart.endsWith('`')) {
@@ -139,7 +131,6 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
       );
     }
 
-    // Contextual Help Display
     if (helpContent) {
       return (
         <div className="space-y-6">
@@ -165,7 +156,6 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
       );
     }
     
-    // Safe check for suggestions array
     const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
     
     if (safeSuggestions.length === 0 && !correctedCode && !explanation) {
@@ -182,7 +172,7 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
         <div className="flex flex-col items-center justify-center h-full text-foreground-muted">
           <SparklesIcon className="w-12 h-12" />
           <p className="mt-4 text-lg">Suggestions will appear here</p>
-          <p className="text-sm">Click "Analyze & Fix" or "Format" to see changes.</p>
+          <p className="text-sm">Select a Version or click "Analyze & Fix".</p>
           
           {isAIConfigured && aiProviderConfig && (
              <div className="mt-8 p-4 bg-background rounded-md border border-border text-xs text-foreground-muted flex flex-col items-center max-w-xs text-center shadow-sm">
@@ -259,7 +249,7 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
     <div className="flex flex-col h-[calc(100vh-150px)] lg:h-auto">
       {/* Folder Tab Header */}
       <div className="flex px-4">
-         <div className="px-4 py-2 bg-background-offset border-t border-x border-border rounded-t-lg font-semibold text-sm transform translate-y-[1px] z-10 select-none">
+         <div className="px-4 py-2 bg-background-offset border-t border-x border-border rounded-t-lg font-semibold text-sm transform translate-y-[1px] z-10 select-none shadow-[0_-2px_5px_rgba(0,0,0,0.05)]">
            AI Feedback & Preview
          </div>
       </div>
@@ -269,9 +259,9 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
           <div className="flex-grow p-4 overflow-y-auto">
             {renderContent()}
           </div>
-          <div className="p-3 border-t border-border bg-background/30 text-center flex items-center justify-center gap-2 text-destructive">
-            <AlertTriangleIcon className="w-5 h-5" />
-            <span className="text-sm font-bold">
+          <div className="p-4 border-t border-border bg-background/50 text-center flex items-center justify-center gap-3 text-destructive">
+            <AlertTriangleIcon className="w-6 h-6 flex-shrink-0" />
+            <span className="text-base font-extrabold">
               Accuracy depends on AI and source of data. Please review all code.
             </span>
           </div>

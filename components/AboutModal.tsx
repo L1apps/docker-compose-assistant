@@ -1,4 +1,5 @@
 import React from 'react';
+import { SquareInfoIcon } from './icons';
 
 interface AboutModalProps {
   isOpen: boolean;
@@ -24,7 +25,8 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
         onClick={e => e.stopPropagation()}
       >
         <header className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-bold text-foreground">
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <SquareInfoIcon className="w-6 h-6" />
             About Docker Compose Assistant
           </h2>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-background transition-colors" aria-label="Close about modal">
@@ -51,8 +53,16 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           </ul>
           
           <h3>Version History</h3>
+
+          <h4>v1.10.1 (Latest)</h4>
+          <ul>
+            <li><strong>Functionality:</strong> Selecting a target version ("Format to Ver") now automatically formats the code to that standard.</li>
+            <li><strong>UI Update:</strong> Redesigned toolbars with standard dropdowns for Insert Snippet and Jump To.</li>
+            <li><strong>Navigation:</strong> "Jump to" now properly scrolls to and highlights the selected section.</li>
+            <li><strong>Style:</strong> Implemented "Folder Tab" styling for panels and updated icons.</li>
+          </ul>
           
-          <h4>v1.10.0 (Latest)</h4>
+          <h4>v1.10.0</h4>
           <ul>
              <li><strong>UI Overhaul:</strong> Introduced folder-tab styling for editor panels and a redesigned toolbar.</li>
              <li><strong>Version Control:</strong> Added a Docker Compose version selector to target specific syntax requirements (e.g., v3.8, v2.4).</li>
@@ -65,30 +75,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
              <li><strong>Feature:</strong> Added GitHub repository link to the application header and footer.</li>
              <li><strong>UI:</strong> Added disclaimer regarding AI accuracy in the feedback panel.</li>
              <li><strong>Fix:</strong> Resolved potential crash when analyzing an empty editor.</li>
-          </ul>
-
-          <h4>v1.9.1</h4>
-          <ul>
-             <li><strong>Improvement:</strong> Explanation text no longer displays markdown syntax artifacts.</li>
-             <li><strong>UI:</strong> Added explicit AI Model display in the suggestions panel.</li>
-          </ul>
-
-          <h4>v1.9.0</h4>
-          <ul>
-             <li><strong>UI Improvement:</strong> Contextual Help now appears in the side panel instead of a popup modal, creating a smoother workflow.</li>
-             <li><strong>Better Formatting:</strong> Explanation text is now rendered with Markdown support (bold, lists, etc.) for improved readability.</li>
-          </ul>
-
-          <h4>v1.8.0</h4>
-          <ul>
-            <li><strong>Enhanced Formatting:</strong> Formatting now shows a Diff View (Before vs. After) so you can review changes before applying them.</li>
-            <li><strong>UI Cleanup:</strong> Replaced bulky buttons with a streamlined icon toolbar.</li>
-            <li><strong>Better Navigation:</strong> Added a "Jump to Section" feature to quickly scroll to services, networks, or volumes.</li>
-          </ul>
-          
-          <h4>v1.6.0</h4>
-          <ul>
-            <li>Rebranded application to "Docker Compose Assistant" (DCA).</li>
           </ul>
         </div>
       </div>

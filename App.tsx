@@ -4,13 +4,13 @@ import { SuggestionPanel } from './components/SuggestionPanel';
 import { AIProvider } from './services/aiProvider';
 import { createAIProvider } from './services/aiServiceFactory';
 import { ContextualHelpResult, Suggestion, AIProviderConfig } from './types';
-import { ExternalLinkIcon, InfoIcon, DockerIcon, SettingsIcon, MailIcon, GitHubIcon } from './components/icons';
+import { ExternalLinkIcon, SquareInfoIcon, DockerIcon, SettingsIcon, MailIcon, GitHubIcon, PaletteIcon } from './components/icons';
 import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.10.0";
+const APP_VERSION = "1.10.1";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 
@@ -110,7 +110,6 @@ services:
     clearResults();
     try {
       const result = await aiProvider.getSuggestionsAndCorrections(code, version);
-      // Defensive check: ensure suggestions is an array to prevent crashes
       setSuggestions(Array.isArray(result.suggestions) ? result.suggestions : []);
       setCorrectedCode(result.correctedCode || '');
     } catch (e) {
@@ -156,7 +155,6 @@ services:
     clearResults();
     try {
       const result = await aiProvider.formatCode(code, version);
-      // Instead of setting code directly, we set correctedCode to trigger the Diff Viewer
       setCorrectedCode(result.formattedCode || '');
       setSuggestions([{ suggestion: `The code has been formatted to standard YAML spacing and Docker Compose ${version} syntax standards.` }]);
     } catch (e) {
@@ -245,10 +243,10 @@ services:
             </a>
             <div className="w-px h-6 bg-border mx-2 hidden sm:block"></div>
             <ThemeSwitcher theme={theme} setTheme={setTheme} />
-             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-blue-600" title="View on Docker Hub">
+             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-[#2496ED]" title="View on Docker Hub">
                 <DockerIcon className="w-6 h-6" />
             </a>
-            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-gray-900 dark:text-white" title="View on GitHub">
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-foreground hover:text-[#2496ED] dark:text-white" title="View on GitHub">
                 <GitHubIcon className="w-6 h-6" />
             </a>
             <button onClick={() => setIsSettingsModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="AI Provider Settings">
@@ -256,7 +254,7 @@ services:
             </button>
              <div className="w-px h-6 bg-border mx-2"></div>
              <button onClick={() => setIsAboutModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="About this Web Application">
-              <InfoIcon className="w-5 h-5" />
+              <SquareInfoIcon className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -316,11 +314,11 @@ services:
               <span>Support</span>
             </a>
             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <DockerIcon className="w-4 h-4 text-blue-600" />
+              <DockerIcon className="w-4 h-4 text-[#2496ED]" />
               <span>Docker Hub</span>
             </a>
             <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <GitHubIcon className="w-4 h-4 text-gray-900 dark:text-white" />
+              <GitHubIcon className="w-4 h-4 text-foreground dark:text-white" />
               <span>GitHub</span>
             </a>
           </div>
