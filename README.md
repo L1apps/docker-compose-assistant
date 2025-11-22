@@ -11,6 +11,7 @@ Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor design
 - **Syntax Snippets**: Quickly insert common Docker Compose blocks (Services, Networks, Volumes, etc.) directly from a dropdown menu.
 - **Structure Navigation**: Automatically detects your services, volumes, and networks for quick navigation within large files.
 - **Contextual Help**: Select any keyword in your file to get a clear explanation and code example directly in the side panel.
+- **Version Aware**: Detects or allows manual selection of Docker Compose versions (e.g., 3.8, 2.4) to ensure compliant syntax.
 - **File Management**: Easily load your existing `docker-compose.yml` files and save your corrected code.
 - **Multiple Themes**: Choose from light, dark, and dracula themes to suit your preference.
 
@@ -73,7 +74,7 @@ Once the container is running, open your web browser and navigate to:
 
 ## Support & Credits
 
-Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
+Developed by [Level 1 Apps](https://l1apps.com).
 For support or inquiries, please visit our website.
 
 ## Configuring the AI Provider

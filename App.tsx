@@ -10,7 +10,7 @@ import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
 
-const APP_VERSION = "1.9.2";
+const APP_VERSION = "1.10.0";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 
@@ -97,7 +97,7 @@ services:
     setError('');
   };
 
-  const handleAnalyze = useCallback(async () => {
+  const handleAnalyze = useCallback(async (version: string) => {
     if (!aiProvider) return;
     
     if (!code.trim()) {
@@ -109,7 +109,7 @@ services:
     setIsLoading(true);
     clearResults();
     try {
-      const result = await aiProvider.getSuggestionsAndCorrections(code);
+      const result = await aiProvider.getSuggestionsAndCorrections(code, version);
       // Defensive check: ensure suggestions is an array to prevent crashes
       setSuggestions(Array.isArray(result.suggestions) ? result.suggestions : []);
       setCorrectedCode(result.correctedCode || '');
@@ -143,7 +143,7 @@ services:
     }
   }, [code, aiProvider]);
   
-  const handleFormatCode = useCallback(async () => {
+  const handleFormatCode = useCallback(async (version: string) => {
     if (!aiProvider) return;
     
     if (!code.trim()) {
@@ -155,10 +155,10 @@ services:
     setIsFormatting(true);
     clearResults();
     try {
-      const result = await aiProvider.formatCode(code);
+      const result = await aiProvider.formatCode(code, version);
       // Instead of setting code directly, we set correctedCode to trigger the Diff Viewer
       setCorrectedCode(result.formattedCode || '');
-      setSuggestions([{ suggestion: "The code has been formatted to standard YAML spacing and syntax standards." }]);
+      setSuggestions([{ suggestion: `The code has been formatted to standard YAML spacing and Docker Compose ${version} syntax standards.` }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred while formatting the code.');
       console.error(e);
@@ -167,13 +167,13 @@ services:
     }
   }, [code, aiProvider]);
 
-  const handleGetHelp = useCallback(async (keyword: string) => {
+  const handleGetHelp = useCallback(async (keyword: string, version: string) => {
     if (!aiProvider) return;
     setHelpKeyword(keyword);
     setIsLoading(true);
     clearResults();
     try {
-      const result = await aiProvider.getContextualHelp(keyword);
+      const result = await aiProvider.getContextualHelp(keyword, version);
       setHelpContent(result);
     } catch (e) {
       setError(e instanceof Error ? e.message : `Failed to get help for "${keyword}".`);
@@ -233,7 +233,7 @@ services:
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-200">
-      <header className="bg-background-offset/80 backdrop-blur-sm border-b border-border p-4 sticky top-0 z-10">
+      <header className="bg-background-offset/80 backdrop-blur-sm border-b border-border p-4 sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold text-foreground">Docker Compose Assistant</h1>
@@ -245,11 +245,11 @@ services:
             </a>
             <div className="w-px h-6 bg-border mx-2 hidden sm:block"></div>
             <ThemeSwitcher theme={theme} setTheme={setTheme} />
-             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors" title="View on Docker Hub">
-                <DockerIcon className="w-5 h-5" />
+             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-blue-600" title="View on Docker Hub">
+                <DockerIcon className="w-6 h-6" />
             </a>
-            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors" title="View on GitHub">
-                <GitHubIcon className="w-5 h-5" />
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="p-2 rounded-md hover:bg-background-offset transition-colors text-gray-900 dark:text-white" title="View on GitHub">
+                <GitHubIcon className="w-6 h-6" />
             </a>
             <button onClick={() => setIsSettingsModalOpen(true)} className="p-2 rounded-md hover:bg-background-offset transition-colors" title="AI Provider Settings">
               <SettingsIcon className="w-5 h-5" />
@@ -309,18 +309,18 @@ services:
 
       <footer className="border-t border-border mt-auto">
         <div className="container mx-auto px-4 lg:px-6 py-3 flex justify-between items-center text-xs text-foreground-muted">
-          <span>Version {APP_VERSION} &copy; {new Date().getFullYear()} L1Apps. Apache 2.0 Licensed.</span>
+          <span>All Rights Reserved &copy; 2025 Level 1 Apps</span>
           <div className="flex items-center gap-4">
             <a href="mailto:services@l1apps.com" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <MailIcon className="w-4 h-4" />
               <span>Support</span>
             </a>
             <a href={DOCKER_HUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <DockerIcon className="w-4 h-4" />
+              <DockerIcon className="w-4 h-4 text-blue-600" />
               <span>Docker Hub</span>
             </a>
             <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <GitHubIcon className="w-4 h-4" />
+              <GitHubIcon className="w-4 h-4 text-gray-900 dark:text-white" />
               <span>GitHub</span>
             </a>
           </div>

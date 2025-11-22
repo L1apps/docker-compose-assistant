@@ -256,18 +256,25 @@ export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col bg-background-offset rounded-lg border border-border h-[calc(100vh-150px)] lg:h-auto shadow-sm">
-      <div className="p-2 border-b border-border bg-background-offset/80">
-        <h2 className="text-sm font-semibold text-foreground px-2">AI Feedback & Preview</h2>
+    <div className="flex flex-col h-[calc(100vh-150px)] lg:h-auto">
+      {/* Folder Tab Header */}
+      <div className="flex px-4">
+         <div className="px-4 py-2 bg-background-offset border-t border-x border-border rounded-t-lg font-semibold text-sm transform translate-y-[1px] z-10 select-none">
+           AI Feedback & Preview
+         </div>
       </div>
-      <div className="flex-grow p-4 overflow-y-auto">
-        {renderContent()}
-      </div>
-      <div className="p-2 border-t border-border bg-background/50 text-[10px] text-center text-foreground-muted">
-        <span className="flex items-center justify-center gap-1">
-          <InfoIcon className="w-3 h-3" />
-          Accuracy depends on AI and source of data. Please review all code.
-        </span>
+      
+      {/* Main Content */}
+      <div className="flex flex-col flex-grow bg-background-offset border border-border rounded-lg rounded-tl-none overflow-hidden shadow-sm relative z-0">
+          <div className="flex-grow p-4 overflow-y-auto">
+            {renderContent()}
+          </div>
+          <div className="p-3 border-t border-border bg-background/30 text-center flex items-center justify-center gap-2 text-destructive">
+            <AlertTriangleIcon className="w-5 h-5" />
+            <span className="text-sm font-bold">
+              Accuracy depends on AI and source of data. Please review all code.
+            </span>
+          </div>
       </div>
     </div>
   );

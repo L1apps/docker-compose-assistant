@@ -86,11 +86,14 @@ export class GeminiProvider implements AIProvider {
     return clean.trim();
   }
   
-  async formatCode(code: string): Promise<{ formattedCode: string }> {
+  async formatCode(code: string, dockerVersion?: string): Promise<{ formattedCode: string }> {
+    const versionInstruction = dockerVersion ? `Ensure the syntax and structure strictly adhere to Docker Compose version ${dockerVersion}.` : 'Adhere to the Docker Compose version specified in the file, or default to the latest stable version.';
+
     const prompt = `
       You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the following docker-compose.yml content.
       
       RULES:
+      - ${versionInstruction}
       - Use 2 spaces for indentation.
       - Maintain consistent spacing around colons and hyphens.
       - Ensure proper YAML syntax.
@@ -147,7 +150,9 @@ export class GeminiProvider implements AIProvider {
     }
   }
 
-  async getContextualHelp(keyword: string): Promise<ContextualHelpResult> {
+  async getContextualHelp(keyword: string, dockerVersion?: string): Promise<ContextualHelpResult> {
+    const versionInstruction = dockerVersion ? `Ensure the example adheres to Docker Compose version ${dockerVersion}.` : '';
+
     const prompt = `
       As an expert on Docker Compose, provide a clear, concise explanation and a simple YAML code example for the following Docker Compose keyword: "${keyword}".
       Focus on the primary use case of the keyword.
@@ -155,6 +160,7 @@ export class GeminiProvider implements AIProvider {
       RULES:
       1. The 'explanation' must be formatted using Markdown (e.g., bold text for emphasis, lists if needed) to be easily readable.
       2. The 'example' field must be RAW YAML. Do NOT wrap the example code in markdown (no \`\`\`yaml).
+      3. ${versionInstruction}
       
       Return the result in JSON format.`;
       
@@ -178,7 +184,9 @@ export class GeminiProvider implements AIProvider {
     }
   }
 
-  async getSuggestionsAndCorrections(code: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
+  async getSuggestionsAndCorrections(code: string, dockerVersion?: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
+    const versionInstruction = dockerVersion ? `Ensure the corrected code and suggestions strictly adhere to Docker Compose version ${dockerVersion}.` : 'Adhere to the Docker Compose version specified in the file.';
+
     const prompt = `
       You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct it, and provide helpful suggestions with examples.
       
@@ -188,9 +196,10 @@ export class GeminiProvider implements AIProvider {
       \`\`\`
       Your tasks:
       1. Correct the code (syntax, indentation, deprecated keys, etc.).
-      2. Ensure all comments are placed on their own line above the code they refer to, not inline.
-      3. Provide helpful hints and best practices (security, performance, maintainability).
-      4. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml) at the start or end.
+      2. ${versionInstruction}
+      3. Ensure all comments are placed on their own line above the code they refer to, not inline.
+      4. Provide helpful hints and best practices (security, performance, maintainability).
+      5. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml) at the start or end.
       
       Return the result in JSON format.`;
     

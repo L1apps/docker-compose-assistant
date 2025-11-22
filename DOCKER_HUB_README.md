@@ -4,7 +4,7 @@
 
 The Docker Compose Assistant is a privacy-first web application designed to help you write, validate, and fix `docker-compose.yml` files. It runs entirely in your browser (client-side) and connects to AI providers (Google Gemini or Local LLMs) to provide intelligent suggestions, auto-formatting, and explanations.
 
-![Version](https://img.shields.io/badge/version-1.9.2-blue) ![License](https://img.shields.io/badge/license-Apache%202.0-green)
+![Version](https://img.shields.io/badge/version-1.10.0-blue) ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
 ## 🚀 Quick Start
 
@@ -45,6 +45,7 @@ Once running, access the editor at: **http://localhost:8500**
 *   **🔍 Contextual Help**: Highlight any keyword in your file to get an instant explanation and example.
 *   **🧭 Structure Navigation**: "Jump to Section" allows you to navigate large files easily.
 *   **🌗 Themes**: Includes Light, Dark, and Dracula themes.
+*   **📏 Version Aware**: Respects the Docker Compose version (v2, v3, etc.) specified in your file for accurate validation.
 
 ## ⚙️ Configuration
 
@@ -62,7 +63,7 @@ When you launch the app for the first time, a wizard will guide you. You can als
 
 ## 🛠 Support
 
-Developed by [Level 1 Apps (L1Apps)](https://l1apps.com).
+Developed by [Level 1 Apps](https://l1apps.com).
 For support or inquiries, please visit our website.
 
 ## 📄 License

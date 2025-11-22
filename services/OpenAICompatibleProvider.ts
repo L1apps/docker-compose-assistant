@@ -165,8 +165,9 @@ export class OpenAICompatibleProvider implements AIProvider {
     return clean.trim();
   }
 
-  async formatCode(code: string): Promise<{ formattedCode: string }> {
-    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. Move inline comments to the line above the code. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
+  async formatCode(code: string, dockerVersion?: string): Promise<{ formattedCode: string }> {
+    const versionInstruction = dockerVersion ? `Ensure the syntax follows Docker Compose version ${dockerVersion}.` : '';
+    const systemPrompt = `You are an expert YAML formatter specializing in Docker Compose files. Your only task is to format the provided docker-compose.yml content. Apply 2-space indentation, ensure consistent spacing, and maintain valid YAML syntax. ${versionInstruction} Move inline comments to the line above the code. Do not alter any values, keys, or logic. Respond with a single JSON object containing a 'formattedCode' key. IMPORTANT: The 'formattedCode' must be RAW YAML. Do NOT wrap it in markdown backticks.`;
     const prompt = `Format this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
     try {
       const result = await this.executeJsonCommand<{ formattedCode: string }>(prompt, systemPrompt);
@@ -187,11 +188,13 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
-  async getContextualHelp(keyword: string): Promise<ContextualHelpResult> {
+  async getContextualHelp(keyword: string, dockerVersion?: string): Promise<ContextualHelpResult> {
+    const versionInstruction = dockerVersion ? `Ensure the example adheres to Docker Compose version ${dockerVersion}.` : '';
     const systemPrompt = `You are an expert on Docker Compose. Provide a clear explanation and a simple YAML code example for a given Docker Compose keyword. 
     RULES:
     1. The 'explanation' must be formatted using Markdown (e.g., bold text for emphasis, lists if needed) to be easily readable.
     2. The 'example' field must be RAW YAML only. Do NOT wrap the example code in markdown (no \`\`\`yaml).
+    3. ${versionInstruction}
     Respond with a single JSON object containing 'explanation' and 'example' keys.`;
     const prompt = `Provide help for the keyword: "${keyword}"`;
     try {
@@ -205,8 +208,9 @@ export class OpenAICompatibleProvider implements AIProvider {
     }
   }
 
-  async getSuggestionsAndCorrections(code: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
-    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. Ensure all comments are placed on their own line above the code they refer to, not inline. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml).`;
+  async getSuggestionsAndCorrections(code: string, dockerVersion?: string): Promise<{ correctedCode: string; suggestions: Suggestion[] }> {
+    const versionInstruction = dockerVersion ? `Ensure the corrections strictly adhere to Docker Compose version ${dockerVersion}.` : '';
+    const systemPrompt = `You are an expert in Docker and Docker Compose. Analyze the provided docker-compose.yml content, correct any errors, and suggest best practices. ${versionInstruction} Ensure all comments are placed on their own line above the code they refer to, not inline. Respond with a single JSON object containing the 'correctedCode' and a 'suggestions' array. The 'suggestions' array should contain objects with 'suggestion' and optional 'example' keys. IMPORTANT: The 'correctedCode' must be RAW YAML only. Do NOT include markdown backticks (like \`\`\`yaml).`;
     const prompt = `Analyze and correct this docker-compose.yml:\n\n\`\`\`yaml\n${code}\n\`\`\``;
      try {
       const result = await this.executeJsonCommand<{ correctedCode: string; suggestions: Suggestion[] }>(prompt, systemPrompt);

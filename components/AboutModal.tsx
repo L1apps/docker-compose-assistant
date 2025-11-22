@@ -35,7 +35,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           <p className="lead text-foreground">Version {version}</p>
           <p>This is a smart, web-based editor and analyzer for Docker Compose files. Get AI-powered auto-correction, formatting, and contextual help, all while keeping your data private.</p>
 
-           <p>Developed by <a href="https://l1apps.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Level 1 Apps (L1Apps)</a>.</p>
+           <p>Developed by <a href="https://l1apps.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Level 1 Apps</a>.</p>
            <p>For support, email us at <a href="mailto:services@l1apps.com" className="text-accent hover:underline">services@l1apps.com</a>.</p>
 
            <h3>Project Links</h3>
@@ -51,8 +51,16 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           </ul>
           
           <h3>Version History</h3>
+          
+          <h4>v1.10.0 (Latest)</h4>
+          <ul>
+             <li><strong>UI Overhaul:</strong> Introduced folder-tab styling for editor panels and a redesigned toolbar.</li>
+             <li><strong>Version Control:</strong> Added a Docker Compose version selector to target specific syntax requirements (e.g., v3.8, v2.4).</li>
+             <li><strong>Branding:</strong> Updated icons and colors for better visibility and brand alignment.</li>
+             <li><strong>Warnings:</strong> Enhanced accuracy warnings to be more prominent.</li>
+          </ul>
 
-          <h4>v1.9.2 (Latest)</h4>
+          <h4>v1.9.2</h4>
           <ul>
              <li><strong>Feature:</strong> Added GitHub repository link to the application header and footer.</li>
              <li><strong>UI:</strong> Added disclaimer regarding AI accuracy in the feedback panel.</li>
