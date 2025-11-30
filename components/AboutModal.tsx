@@ -54,27 +54,30 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, version
           
           <h3>Version History</h3>
 
-          <h4>v1.10.2 (Latest)</h4>
+          <h4>v1.10.7 (Latest)</h4>
           <ul>
-            <li><strong>Logic Update:</strong> "Format to Ver" now immediately formats the code in the editor to the selected version.</li>
-            <li><strong>Fix:</strong> Fixed an issue where the "Jump To" feature would not properly highlight the selected code section.</li>
-            <li><strong>UI:</strong> Updated icons for Themes and About actions.</li>
+             <li><strong>Documentation:</strong> Added application screenshot to README.</li>
+             <li><strong>Maintenance:</strong> Cleaned up deprecated configuration files.</li>
           </ul>
 
-          <h4>v1.10.1</h4>
+          <h4>v1.10.6</h4>
           <ul>
-            <li><strong>Functionality:</strong> Selecting a target version ("Format to Ver") now automatically formats the code to that standard.</li>
-            <li><strong>UI Update:</strong> Redesigned toolbars with standard dropdowns for Insert Snippet and Jump To.</li>
-            <li><strong>Navigation:</strong> "Jump to" now properly scrolls to and highlights the selected section.</li>
-            <li><strong>Style:</strong> Implemented "Folder Tab" styling for panels and updated icons.</li>
+             <li><strong>Maintenance:</strong> Codebase cleanup and optimization.</li>
+             <li><strong>Refactor:</strong> Removed unused components and services.</li>
+             <li><strong>Standards:</strong> Enforced file naming conventions.</li>
+          </ul>
+
+          <h4>v1.10.5</h4>
+          <ul>
+             <li><strong>Standards:</strong> Added <code>DEV_STANDARDS.md</code>.</li>
+             <li><strong>Architecture:</strong> Implemented central versioning.</li>
+             <li><strong>DevOps:</strong> Added <code>HEALTHCHECK</code>.</li>
           </ul>
           
-          <h4>v1.10.0</h4>
+          <h4>v1.10.4</h4>
           <ul>
-             <li><strong>UI Overhaul:</strong> Introduced folder-tab styling for editor panels and a redesigned toolbar.</li>
-             <li><strong>Version Control:</strong> Added a Docker Compose version selector to target specific syntax requirements (e.g., v3.8, v2.4).</li>
-             <li><strong>Branding:</strong> Updated icons and colors for better visibility and brand alignment.</li>
-             <li><strong>Warnings:</strong> Enhanced accuracy warnings to be more prominent.</li>
+             <li><strong>Documentation:</strong> Consolidated all documentation into README.md.</li>
+             <li><strong>Documentation:</strong> Added new <code>about.md</code>.</li>
           </ul>
         </div>
       </div>

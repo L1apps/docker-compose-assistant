@@ -19,6 +19,10 @@ FROM nginx:1.25-alpine
 # Copy the built assets from the 'build' stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Healthcheck to ensure Nginx is serving content
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget --quiet --tries=1 --spider http://localhost:80/ || exit 1
+
 # Expose port 80 and start Nginx
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

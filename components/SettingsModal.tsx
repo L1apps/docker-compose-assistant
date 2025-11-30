@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AIProviderConfig } from '../types';
-import { ExternalLinkIcon, ChevronDownIcon, AlertTriangleIcon, CheckIcon } from './icons';
+import { ChevronDownIcon, AlertTriangleIcon, CheckIcon } from './icons';
 
 interface SettingsModalProps {
   isOpen: boolean;

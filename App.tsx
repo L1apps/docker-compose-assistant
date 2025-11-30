@@ -9,8 +9,8 @@ import { AboutModal } from './components/AboutModal';
 import { ThemeSwitcher, Theme } from './components/ThemeSwitcher';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { SettingsModal } from './components/SettingsModal';
+import { APP_VERSION } from './version';
 
-const APP_VERSION = "1.10.2";
 const DOCKER_HUB_URL = "https://hub.docker.com/r/l1apps/docker-compose-assistant";
 const GITHUB_URL = "https://github.com/L1apps/docker-compose-assistant";
 

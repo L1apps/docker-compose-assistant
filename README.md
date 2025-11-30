@@ -2,6 +2,10 @@
 
 Welcome to the Docker Compose Assistant! DCA is a smart, web-based editor designed to help you write, validate, and improve your `docker-compose.yml` files. Powered by pluggable AI providers like Google Gemini or your own local models, it provides intelligent suggestions, auto-corrections, and formatting.
 
+![Version](https://img.shields.io/badge/version-1.10.7-blue)
+
+![Docker Compose Assistant Screenshot](https://l1apps.com/docker-compose-assistant/dca/)
+
 ## Features
 
 - **Pluggable AI Providers**: Configure the editor to use your preferred AI service, with support for Google Gemini and any OpenAI-compatible API (e.g., Ollama for local models).
@@ -61,21 +65,27 @@ You can also run the container directly with a single command.
 
 ### Option 3: Deploying with Portainer
 
-For users who manage their Docker environment with Portainer, we provide a dedicated guide.
+This guide will walk you through deploying the Docker Compose Assistant using a [Portainer](https://www.portainer.io/) Stack.
 
--   **[View the Portainer Deployment Guide](./PORTAINER_DEPLOYMENT.md)**
+1.  **Navigate to Stacks:** In the Portainer sidebar, click on **"Stacks"**.
+2.  **Add a New Stack:** Click the **"Add stack"** button in the top right corner.
+3.  **Configure the Stack:**
+    *   **Name:** Give your stack a descriptive name, e.g., `docker-compose-assistant`.
+    *   **Build method:** Choose the **"Web editor"**.
+4.  **Paste the Configuration:** Copy the following configuration into the web editor:
 
-### Access the Web Application
+        services:
+          dca-app:
+            image: l1apps/docker-compose-assistant:latest
+            container_name: docker-compose-assistant
+            ports:
+              - "8500:80"
+            restart: unless-stopped
 
-Once the container is running, open your web browser and navigate to:
-**[http://localhost:8500](http://localhost:8500)** (or the IP of your server if running remotely).
+5.  **Deploy:** Scroll down and click **"Deploy the stack"**.
+6.  **Access:** Once deployed, navigate to `http://<your-server-ip>:8500`.
 
 ---
-
-## Support & Credits
-
-Developed by [Level 1 Apps](https://l1apps.com).
-For support or inquiries, please visit our website.
 
 ## Configuring the AI Provider
 
@@ -105,4 +115,8 @@ While you can use any compatible model, here are some recommendations that are k
     -   `mistral`: A high-performance model known for its speed and efficiency.
     -   `phi3`: A powerful small language model from Microsoft.
 
-You can select these from the dropdown in the settings or type in any other custom model name you have available on your local server.
+## Support & Credits
+
+Developed by [Level 1 Apps](https://l1apps.com).
+For support or inquiries, please visit our website.
+For more details about the application logic and limitations, see [about.md](./about.md).
